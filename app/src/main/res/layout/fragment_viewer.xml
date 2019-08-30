@@ -65,7 +65,8 @@
             android:paddingTop="16dp"
             android:paddingEnd="24dp"
             android:paddingBottom="15dp"
-            app:paddingBottomSystemWindowInsets="@{true}">
+            app:paddingBottomSystemWindowInsets="@{true}"
+            tools:targetApi="m">
 
             <ImageView
                 android:id="@+id/expand_picture_information"

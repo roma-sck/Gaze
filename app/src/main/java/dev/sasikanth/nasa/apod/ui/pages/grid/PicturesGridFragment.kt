@@ -20,7 +20,7 @@ import dev.sasikanth.nasa.apod.ui.adapters.APodsGridAdapter
 
 class PicturesGridFragment : Fragment() {
 
-    private val viewModel: MainViewModel by savedStateActivityViewModels { savedStateHandle ->
+    val viewModel: MainViewModel by savedStateActivityViewModels { savedStateHandle ->
         injector.mainViewModel.create(savedStateHandle)
     }
     private val gridScrollListener = object : RecyclerView.OnScrollListener() {
