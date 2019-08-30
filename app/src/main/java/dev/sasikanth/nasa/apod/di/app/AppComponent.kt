@@ -10,7 +10,7 @@ import dev.sasikanth.nasa.apod.ui.pages.viewer.ViewerFragment
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [DataModule::class])
+@Component(modules = [DataModule::class, ViewModelModule::class])
 interface AppComponent {
 
     @Component.Factory
@@ -18,7 +18,7 @@ interface AppComponent {
         fun create(@BindsInstance context: Context): AppComponent
     }
 
-    val mainViewModel: MainViewModel
+    val mainViewModel: MainViewModel.Factory
 
     fun inject(mainActivity: MainActivity)
     fun inject(picturesGridFragment: PicturesGridFragment)

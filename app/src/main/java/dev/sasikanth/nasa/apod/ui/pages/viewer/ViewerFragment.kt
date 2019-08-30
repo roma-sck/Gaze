@@ -15,10 +15,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import dev.sasikanth.nasa.apod.data.APod
 import dev.sasikanth.nasa.apod.databinding.FragmentViewerBinding
-import dev.sasikanth.nasa.apod.di.misc.activityViewModels
 import dev.sasikanth.nasa.apod.di.misc.injector
+import dev.sasikanth.nasa.apod.di.misc.savedStateActivityViewModels
 import dev.sasikanth.nasa.apod.services.PictureDownloadService
-import dev.sasikanth.nasa.apod.ui.MainActivity
 import dev.sasikanth.nasa.apod.ui.MainViewModel
 import dev.sasikanth.nasa.apod.ui.adapters.ViewerAdapter
 import dev.sasikanth.nasa.apod.utils.ZoomOutPageTransformer
@@ -36,8 +35,21 @@ class ViewerFragment : Fragment(), PictureInformationListener {
         private val PERMISSIONS = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }
 
-    private val viewModel: MainViewModel by activityViewModels {
-        requireActivity().injector.mainViewModel
+    private val viewModel: MainViewModel by savedStateActivityViewModels { savedStateHandle ->
+        injector.mainViewModel.create(savedStateHandle)
+    }
+    private val pagerListener = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            super.onPageSelected(position)
+            viewModel.currentPicturePosition = position
+            val currentAPod = viewModel.aPods.value?.get(
+                viewModel.currentPicturePosition
+            )
+            if (currentAPod != null) {
+                binding.aPod = currentAPod
+                binding.executePendingBindings()
+            }
+        }
     }
 
     private lateinit var binding: FragmentViewerBinding
@@ -52,9 +64,10 @@ class ViewerFragment : Fragment(), PictureInformationListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentViewerBinding.inflate(inflater)
-        binding.pictureInformationListener = this
-        binding.lifecycleOwner = this
+        binding = FragmentViewerBinding.inflate(inflater).apply {
+            pictureInformationListener = this@ViewerFragment
+            lifecycleOwner = this@ViewerFragment
+        }
 
         val viewerAdapter = ViewerAdapter()
 
@@ -62,29 +75,22 @@ class ViewerFragment : Fragment(), PictureInformationListener {
             adapter = viewerAdapter
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
             setPageTransformer(ZoomOutPageTransformer())
-            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
-                    MainActivity.currentPosition = position
-                    val currentAPod = viewModel.aPods.value?.get(MainActivity.currentPosition)
-                    if (currentAPod != null) {
-                        binding.aPod = currentAPod
-                        binding.executePendingBindings()
-                    }
-                }
-            })
         }
-
         binding.exitPictureDetail.setOnClickListener {
             findNavController().navigateUp()
         }
 
         viewModel.aPods.observe(viewLifecycleOwner, Observer {
             viewerAdapter.submitList(it)
-            binding.apodsViewer.setCurrentItem(MainActivity.currentPosition, false)
+            binding.apodsViewer.setCurrentItem(viewModel.currentPicturePosition, false)
         })
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.apodsViewer.registerOnPageChangeCallback(pagerListener)
     }
 
     override fun onRequestPermissionsResult(
@@ -124,6 +130,12 @@ class ViewerFragment : Fragment(), PictureInformationListener {
             // Storage permission is not given, show dialog and ask for permission
             requestPermissions(PERMISSIONS, STORAGE_PERMISSION_REQUEST_CODE)
         }
+    }
+
+    override fun onDestroyView() {
+        binding.pictureInformationListener = null
+        binding.apodsViewer.unregisterOnPageChangeCallback(pagerListener)
+        super.onDestroyView()
     }
 
     private fun allPermissionsGranted(): Boolean {

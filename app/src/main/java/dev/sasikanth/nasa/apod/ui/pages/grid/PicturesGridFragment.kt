@@ -12,20 +12,27 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dev.sasikanth.nasa.apod.databinding.FragmentPicturesGridBinding
-import dev.sasikanth.nasa.apod.di.misc.activityViewModels
 import dev.sasikanth.nasa.apod.di.misc.injector
-import dev.sasikanth.nasa.apod.ui.MainActivity
+import dev.sasikanth.nasa.apod.di.misc.savedStateActivityViewModels
 import dev.sasikanth.nasa.apod.ui.MainViewModel
 import dev.sasikanth.nasa.apod.ui.adapters.APodItemListener
 import dev.sasikanth.nasa.apod.ui.adapters.APodsGridAdapter
 
 class PicturesGridFragment : Fragment() {
 
-    private val viewModel: MainViewModel by activityViewModels {
-        requireActivity().injector.mainViewModel
+    private val viewModel: MainViewModel by savedStateActivityViewModels { savedStateHandle ->
+        injector.mainViewModel.create(savedStateHandle)
+    }
+    private val gridScrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+            val firstVisiblePosition = gridLayoutManager.findFirstVisibleItemPosition()
+            viewModel.currentPicturePosition = firstVisiblePosition
+        }
     }
 
     private lateinit var binding: FragmentPicturesGridBinding
+    private lateinit var gridLayoutManager: GridLayoutManager
 
     override fun onAttach(context: Context) {
         requireActivity().injector.inject(this)
@@ -41,15 +48,16 @@ class PicturesGridFragment : Fragment() {
 
         val adapter = APodsGridAdapter(APodItemListener { position ->
             // Navigate to picture view
-            MainActivity.currentPosition = position
+            viewModel.currentPicturePosition = position
             findNavController().navigate(PicturesGridFragmentDirections.actionShowPicture())
         })
 
         binding.apodsGrid.apply {
+            setHasFixedSize(true)
+            gridLayoutManager = layoutManager as GridLayoutManager
             this.adapter = adapter
 
-            val layoutManager = binding.apodsGrid.layoutManager as GridLayoutManager
-            layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
                     return if (adapter.getItemViewType(position) == APodsGridAdapter.LOADING_ITEM) {
                         2
@@ -58,17 +66,6 @@ class PicturesGridFragment : Fragment() {
                     }
                 }
             }
-
-            addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                // Inorder to save the scroll position on orientation change
-                // we are getting first visible item position from the GridLayoutManager
-                // and setting it as current position
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
-                    MainActivity.currentPosition = firstVisiblePosition
-                }
-            })
         }
 
         viewModel.aPods.observe(viewLifecycleOwner, Observer { pagedList ->
@@ -84,18 +81,27 @@ class PicturesGridFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // Scrolling to current picture position
         scrollToPosition()
     }
 
+    override fun onDestroyView() {
+        binding.apodsGrid.removeOnScrollListener(gridScrollListener)
+        super.onDestroyView()
+    }
+
     private fun scrollToPosition() {
-        binding.apodsGrid.doOnLayout {
-            val layoutManager = binding.apodsGrid.layoutManager
-            val viewAtPosition = layoutManager?.findViewByPosition(MainActivity.currentPosition)
-            if (viewAtPosition == null || layoutManager
-                    .isViewPartiallyVisible(viewAtPosition, false, true)
-            ) {
-                binding.apodsGrid.post {
-                    layoutManager?.scrollToPosition(MainActivity.currentPosition)
+        binding.apodsGrid.apply {
+            doOnLayout {
+                val viewAtPosition =
+                    gridLayoutManager.findViewByPosition(viewModel.currentPicturePosition)
+                if (viewAtPosition == null ||
+                    gridLayoutManager.isViewPartiallyVisible(viewAtPosition, false, true)
+                ) {
+                    post {
+                        gridLayoutManager.scrollToPosition(viewModel.currentPicturePosition)
+                        addOnScrollListener(gridScrollListener)
+                    }
                 }
             }
         }
