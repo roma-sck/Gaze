@@ -8,7 +8,8 @@ buildscript {
       constraintLayout: '2.0.0-beta4',
       jUnit           : '4.12',
       jUnitExt        : '1.1.1',
-      espressoCore    : '3.2.0'
+      espressoCore    : '3.2.0',
+      mobius          : '1.4.0-beta2',
   ]
 
   repositories {

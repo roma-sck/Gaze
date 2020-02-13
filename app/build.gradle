@@ -41,7 +41,11 @@ dependencies {
   implementation "androidx.core:core-ktx:$versions.coreKtx"
   implementation "androidx.constraintlayout:constraintlayout:$versions.constraintLayout"
 
+  implementation "com.spotify.mobius:mobius-core:$versions.mobius"
+  implementation "com.spotify.mobius:mobius-android:$versions.mobius"
+
   testImplementation "junit:junit:$versions.jUnit"
+  testImplementation "com.spotify.mobius:mobius-test:$versions.mobius"
 
   androidTestImplementation "androidx.test.ext:junit:$versions.jUnitExt"
   androidTestImplementation "androidx.test.espresso:espresso-core:$versions.espressoCore"
