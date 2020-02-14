@@ -9,7 +9,7 @@ import org.junit.Test
 class ImagesGridInitTest {
   @Test
   fun `when screen is created, then load images`() {
-    val defaultModel = ImagesGridModel.DEFAULT
+    val defaultModel = ImagesGridModel.create(numberOfImagesToLoad = 15)
     val initSpec = InitSpec<ImagesGridModel, ImagesGridEffect>(ImagesGridInit())
 
     initSpec
