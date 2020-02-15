@@ -7,6 +7,7 @@ import com.spotify.mobius.test.NextMatchers.hasNoModel
 import com.spotify.mobius.test.UpdateSpec
 import com.spotify.mobius.test.UpdateSpec.assertThatNext
 import org.junit.Test
+import org.threeten.bp.LocalDate
 
 class ImagesGridUpdateTest {
   private val defaultModel = ImagesGridModel.create(numberOfImagesToLoad = 15)
@@ -14,7 +15,8 @@ class ImagesGridUpdateTest {
 
   @Test
   fun `when images are loaded, then update ui`() {
-    val image = GazeImage()
+    val date = LocalDate.parse("2020-02-15")
+    val image = GazeImage(date)
     val images = listOf(image)
 
     updateSpec
@@ -66,6 +68,23 @@ class ImagesGridUpdateTest {
       .then(
         assertThatNext(
           hasModel(defaultModel.fetchImagesFail(errorMessage))
+        )
+      )
+  }
+
+  @Test
+  fun `when image is clicked, then show image details`() {
+    val date = LocalDate.parse("2020-02-14")
+    val image = GazeImage(date)
+    val images = listOf(image)
+
+    updateSpec
+      .given(defaultModel.imagesLoaded(images))
+      .whenEvent(ImageClicked(date))
+      .then(
+        assertThatNext(
+          hasNoModel(),
+          hasEffects(ShowImageDetails(date) as ImagesGridEffect)
         )
       )
   }

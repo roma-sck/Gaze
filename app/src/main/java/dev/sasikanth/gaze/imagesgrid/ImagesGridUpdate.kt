@@ -21,6 +21,9 @@ class ImagesGridUpdate : Update<ImagesGridModel, ImagesGridEvent, ImagesGridEffe
       is FetchImagesFail -> {
         next(model.fetchImagesFail(event.errorMessage))
       }
+      is ImageClicked -> {
+        dispatch(ShowImageDetails(event.date))
+      }
     }
   }
 }

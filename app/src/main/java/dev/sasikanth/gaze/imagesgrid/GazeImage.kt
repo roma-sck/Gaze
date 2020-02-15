@@ -1,5 +1,5 @@
 package dev.sasikanth.gaze.imagesgrid
 
-class GazeImage {
+import org.threeten.bp.LocalDate
 
-}
+data class GazeImage(val date: LocalDate)
