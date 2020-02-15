@@ -15,7 +15,8 @@ buildscript {
       room            : '2.2.3',
       truth           : '1.0.1',
       mockitoKotlin   : '2.2.0',
-      retrofit        : '2.7.1'
+      retrofit        : '2.7.1',
+      moshi           : '1.9.2'
   ]
 
   repositories {

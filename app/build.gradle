@@ -64,6 +64,10 @@ dependencies {
   kapt "androidx.room:room-compiler:$versions.room"
 
   implementation "com.squareup.retrofit2:retrofit:$versions.retrofit"
+  implementation "com.squareup.retrofit2:converter-moshi:$versions.retrofit"
+
+  implementation "com.squareup.moshi:moshi:$versions.moshi"
+  kapt "com.squareup.moshi:moshi-kotlin-codegen:$versions.moshi"
 
   testImplementation "junit:junit:$versions.jUnit"
   testImplementation "com.spotify.mobius:mobius-test:$versions.mobius"
