@@ -18,6 +18,9 @@ class ImagesGridUpdate : Update<ImagesGridModel, ImagesGridEvent, ImagesGridEffe
       is FetchImagesSuccess -> {
         next(model.fetchImagesSuccess())
       }
+      is FetchImagesFail -> {
+        next(model.fetchImagesFail(event.errorMessage))
+      }
     }
   }
 }

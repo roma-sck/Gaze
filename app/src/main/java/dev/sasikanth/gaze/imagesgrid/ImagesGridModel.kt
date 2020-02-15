@@ -1,6 +1,7 @@
 package dev.sasikanth.gaze.imagesgrid
 
 import dev.sasikanth.gaze.utils.Result
+import dev.sasikanth.gaze.utils.Result.Fail
 import dev.sasikanth.gaze.utils.Result.Success
 import dev.sasikanth.gaze.utils.Result.UnInitialized
 
@@ -18,4 +19,7 @@ data class ImagesGridModel(
 
   fun fetchImagesSuccess(): ImagesGridModel =
     copy(fetchImagesStatus = Success)
+
+  fun fetchImagesFail(errorMessage: String): ImagesGridModel =
+    copy(fetchImagesStatus = Fail(errorMessage))
 }

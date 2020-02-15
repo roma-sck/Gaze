@@ -55,4 +55,18 @@ class ImagesGridUpdateTest {
         )
       )
   }
+
+  @Test
+  fun `when fetch images is unsuccessful, then update ui`() {
+    val errorMessage = "Failed to load images"
+
+    updateSpec
+      .given(defaultModel)
+      .whenEvent(FetchImagesFail(errorMessage))
+      .then(
+        assertThatNext(
+          hasModel(defaultModel.fetchImagesFail(errorMessage))
+        )
+      )
+  }
 }
