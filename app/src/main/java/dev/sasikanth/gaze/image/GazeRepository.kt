@@ -4,8 +4,9 @@ import dev.sasikanth.gaze.AppDatabase
 import dev.sasikanth.gaze.BuildConfig
 import kotlinx.coroutines.flow.Flow
 import org.threeten.bp.LocalDate
+import javax.inject.Inject
 
-class GazeRepository(
+class GazeRepository @Inject constructor(
   appDatabase: AppDatabase,
   private val pictureApi: NasaPictureApi
 ) {
