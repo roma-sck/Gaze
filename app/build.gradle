@@ -69,6 +69,9 @@ dependencies {
   implementation "com.squareup.moshi:moshi:$versions.moshi"
   kapt "com.squareup.moshi:moshi-kotlin-codegen:$versions.moshi"
 
+  implementation "com.google.dagger:dagger-android:$versions.dagger"
+  kapt "com.google.dagger:dagger-compiler:$versions.dagger"
+
   testImplementation "junit:junit:$versions.jUnit"
   testImplementation "com.spotify.mobius:mobius-test:$versions.mobius"
   testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$versions.coroutines"
