@@ -8,6 +8,8 @@ import dev.sasikanth.gaze.AppDatabase
 import dev.sasikanth.gaze.image.NasaPictureApi
 import dev.sasikanth.gaze.utils.AppDispatcherProvider
 import dev.sasikanth.gaze.utils.DispatcherProvider
+import dev.sasikanth.gaze.utils.PacificClock
+import org.threeten.bp.Clock
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.create
@@ -39,5 +41,11 @@ object AppModule {
   @Singleton
   fun providesAppDispatcherProvider(): DispatcherProvider {
     return AppDispatcherProvider()
+  }
+
+  @Provides
+  @Singleton
+  fun providesPacificClock(): Clock {
+    return PacificClock()
   }
 }
