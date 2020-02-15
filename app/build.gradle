@@ -44,6 +44,8 @@ dependencies {
   implementation "com.spotify.mobius:mobius-core:$versions.mobius"
   implementation "com.spotify.mobius:mobius-android:$versions.mobius"
 
+  implementation "com.jakewharton.threetenabp:threetenabp:$versions.threeten"
+
   testImplementation "junit:junit:$versions.jUnit"
   testImplementation "com.spotify.mobius:mobius-test:$versions.mobius"
 

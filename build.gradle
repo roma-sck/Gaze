@@ -10,6 +10,7 @@ buildscript {
       jUnitExt        : '1.1.1',
       espressoCore    : '3.2.0',
       mobius          : '1.4.0-beta2',
+      threeten        : '1.2.2'
   ]
 
   repositories {
