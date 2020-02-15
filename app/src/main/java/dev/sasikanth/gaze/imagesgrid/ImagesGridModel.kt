@@ -26,4 +26,7 @@ data class ImagesGridModel(
 
   fun fetchMoreImageSuccess(): ImagesGridModel =
     copy(fetchMoreImagesStatus = Success)
+
+  fun fetchMoreImagesFail(errorMessage: String): ImagesGridModel =
+    copy(fetchMoreImagesStatus = Fail(errorMessage))
 }

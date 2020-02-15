@@ -154,4 +154,23 @@ class ImagesGridUpdateTest {
         )
       )
   }
+
+  @Test
+  fun `when fetch more images is unsuccessful, then udpate ui`() {
+    val image = GazeImage(LocalDate.parse("2018-01-01"))
+    val images = listOf(image)
+    val modelWithImages = defaultModel.imagesLoaded(images)
+
+    val errorMessage = "Unable to fetch more images"
+
+    updateSpec
+      .given(modelWithImages)
+      .whenEvent(FetchMoreImagesFail(errorMessage))
+      .then(
+        assertThatNext(
+          hasModel(modelWithImages.fetchMoreImagesFail(errorMessage)),
+          hasNoEffects()
+        )
+      )
+  }
 }

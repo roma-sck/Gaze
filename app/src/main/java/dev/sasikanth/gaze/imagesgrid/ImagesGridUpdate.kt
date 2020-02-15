@@ -37,6 +37,9 @@ class ImagesGridUpdate(private val clock: Clock) : Update<ImagesGridModel, Image
       is FetchMoreImagesSuccess -> {
         next(model.fetchMoreImageSuccess())
       }
+      is FetchMoreImagesFail -> {
+        next(model.fetchMoreImagesFail(event.errorMessage))
+      }
     }
   }
 
