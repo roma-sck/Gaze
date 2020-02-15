@@ -9,6 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ImagesGridEffectHandler(
   private val gazeRepository: GazeRepository,
@@ -25,6 +26,20 @@ class ImagesGridEffectHandler(
             coroutineScope.launch {
               gazeRepository.loadImages().collect { images ->
                 output.accept(ImagesLoaded(images))
+              }
+            }
+          }
+          is FetchImages -> {
+            coroutineScope.launch {
+              try {
+                val pictures = gazeRepository.fetchPictures(effect.startDate, effect.endDate)
+
+                withContext(dispatcherProvider.io) {
+                  gazeRepository.insertPictures(pictures)
+                }
+                output.accept(FetchImagesSuccess)
+              } catch (e: Exception) {
+                output.accept(FetchImagesFail(e.localizedMessage.orEmpty()))
               }
             }
           }
