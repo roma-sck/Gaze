@@ -1,14 +1,14 @@
 package dev.sasikanth.gaze.imagesgrid
 
-import dev.sasikanth.gaze.utils.Result
-import dev.sasikanth.gaze.utils.Result.Fail
-import dev.sasikanth.gaze.utils.Result.Success
-import dev.sasikanth.gaze.utils.Result.UnInitialized
+import dev.sasikanth.gaze.utils.FetchResult
+import dev.sasikanth.gaze.utils.FetchResult.Fail
+import dev.sasikanth.gaze.utils.FetchResult.Success
+import dev.sasikanth.gaze.utils.FetchResult.UnInitialized
 
 data class ImagesGridModel(
   val images: List<GazeImage>?,
   val numberOfImagesToLoad: Int,
-  val fetchImagesStatus: Result
+  val fetchImagesStatus: FetchResult
 ) {
   companion object {
     fun create(numberOfImagesToLoad: Int) = ImagesGridModel(null, numberOfImagesToLoad, UnInitialized)
