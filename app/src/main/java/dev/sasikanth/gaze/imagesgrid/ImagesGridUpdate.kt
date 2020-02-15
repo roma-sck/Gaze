@@ -24,6 +24,12 @@ class ImagesGridUpdate : Update<ImagesGridModel, ImagesGridEvent, ImagesGridEffe
       is ImageClicked -> {
         dispatch(ShowImageDetails(event.date))
       }
+      ImagesListReachedEnd -> {
+        val images = model.images!!
+        val endDate = images.last().date.minusDays(1)
+        val startDate = endDate.minusDays(model.numberOfImagesToLoad.toLong())
+        dispatch(FetchMoreImages(startDate, endDate))
+      }
     }
   }
 }

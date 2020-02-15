@@ -9,3 +9,5 @@ object LoadImages : ImagesGridEffect()
 data class FetchImages(val numberOfImagesToLoad: Int) : ImagesGridEffect()
 
 data class ShowImageDetails(val date: LocalDate) : ImagesGridEffect()
+
+data class FetchMoreImages(val startDate: LocalDate, val endDate: LocalDate) : ImagesGridEffect()

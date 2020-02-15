@@ -88,4 +88,24 @@ class ImagesGridUpdateTest {
         )
       )
   }
+
+  @Test
+  fun `when images list reaches end, then fetch more images`() {
+    val image1 = GazeImage(LocalDate.parse("2018-01-02"))
+    val image2 = GazeImage(LocalDate.parse("2018-01-01"))
+    val images = listOf(image1, image2)
+
+    val expectedStartDate = LocalDate.parse("2017-12-16")
+    val expectedEndDate = LocalDate.parse("2017-12-31")
+
+    updateSpec
+      .given(defaultModel.imagesLoaded(images))
+      .whenEvent(ImagesListReachedEnd)
+      .then(
+        assertThatNext(
+          hasNoModel(),
+          hasEffects(FetchMoreImages(expectedStartDate, expectedEndDate) as ImagesGridEffect)
+        )
+      )
+  }
 }
