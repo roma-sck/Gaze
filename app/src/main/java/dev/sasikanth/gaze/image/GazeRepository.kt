@@ -1,13 +1,15 @@
 package dev.sasikanth.gaze.image
 
+import dev.sasikanth.gaze.AppDatabase
 import dev.sasikanth.gaze.BuildConfig
 import kotlinx.coroutines.flow.Flow
 import org.threeten.bp.LocalDate
 
 class GazeRepository(
-  private val imageDao: GazeImage.RoomDao,
+  appDatabase: AppDatabase,
   private val pictureApi: NasaPictureApi
 ) {
+  private val imageDao = appDatabase.gazeDao()
   private val apiKey = BuildConfig.API_KEY
 
   fun loadImages(): Flow<List<GazeImage>> =
