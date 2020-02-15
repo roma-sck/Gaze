@@ -6,6 +6,7 @@ import com.spotify.mobius.test.NextMatchers.hasNoEffects
 import com.spotify.mobius.test.NextMatchers.hasNoModel
 import com.spotify.mobius.test.UpdateSpec
 import com.spotify.mobius.test.UpdateSpec.assertThatNext
+import dev.sasikanth.gaze.image.GazeImage
 import dev.sasikanth.gaze.utils.TestClock
 import org.junit.Test
 import org.threeten.bp.LocalDate

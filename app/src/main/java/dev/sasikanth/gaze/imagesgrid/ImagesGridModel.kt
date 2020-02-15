@@ -1,5 +1,6 @@
 package dev.sasikanth.gaze.imagesgrid
 
+import dev.sasikanth.gaze.image.GazeImage
 import dev.sasikanth.gaze.utils.FetchResult
 import dev.sasikanth.gaze.utils.FetchResult.Fail
 import dev.sasikanth.gaze.utils.FetchResult.Success

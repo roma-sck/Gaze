@@ -1,5 +1,6 @@
 package dev.sasikanth.gaze.imagesgrid
 
+import dev.sasikanth.gaze.image.GazeImage
 import org.threeten.bp.LocalDate
 
 sealed class ImagesGridEvent

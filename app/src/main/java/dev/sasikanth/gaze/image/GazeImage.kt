@@ -1,4 +1,4 @@
-package dev.sasikanth.gaze.imagesgrid
+package dev.sasikanth.gaze.image
 
 import org.threeten.bp.LocalDate
 
