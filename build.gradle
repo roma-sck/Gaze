@@ -12,7 +12,8 @@ buildscript {
       mobius          : '1.4.0-beta2',
       threeten        : '1.2.2',
       coroutines      : '1.3.3',
-      room            : '2.2.3'
+      room            : '2.2.3',
+      truth           : '1.0.1'
   ]
 
   repositories {

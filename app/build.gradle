@@ -67,6 +67,7 @@ dependencies {
   testImplementation "com.spotify.mobius:mobius-test:$versions.mobius"
   testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$versions.coroutines"
   testImplementation "androidx.room:room-testing:$versions.room"
+  testImplementation "com.google.truth:truth:$versions.truth"
 
   androidTestImplementation "androidx.test.ext:junit:$versions.jUnitExt"
   androidTestImplementation "androidx.test.espresso:espresso-core:$versions.espressoCore"
