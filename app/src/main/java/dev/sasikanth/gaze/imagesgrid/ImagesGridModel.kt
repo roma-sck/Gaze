@@ -8,10 +8,11 @@ import dev.sasikanth.gaze.utils.FetchResult.UnInitialized
 data class ImagesGridModel(
   val images: List<GazeImage>?,
   val numberOfImagesToLoad: Int,
-  val fetchImagesStatus: FetchResult
+  val fetchImagesStatus: FetchResult,
+  val fetchMoreImagesStatus: FetchResult
 ) {
   companion object {
-    fun create(numberOfImagesToLoad: Int) = ImagesGridModel(null, numberOfImagesToLoad, UnInitialized)
+    fun create(numberOfImagesToLoad: Int) = ImagesGridModel(null, numberOfImagesToLoad, UnInitialized, UnInitialized)
   }
 
   fun imagesLoaded(images: List<GazeImage>): ImagesGridModel =
@@ -22,4 +23,7 @@ data class ImagesGridModel(
 
   fun fetchImagesFail(errorMessage: String): ImagesGridModel =
     copy(fetchImagesStatus = Fail(errorMessage))
+
+  fun fetchMoreImageSuccess(): ImagesGridModel =
+    copy(fetchMoreImagesStatus = Success)
 }

@@ -13,3 +13,5 @@ data class FetchImagesFail(val errorMessage: String) : ImagesGridEvent()
 data class ImageClicked(val date: LocalDate) : ImagesGridEvent()
 
 object ImagesListReachedEnd : ImagesGridEvent()
+
+object FetchMoreImagesSuccess : ImagesGridEvent()

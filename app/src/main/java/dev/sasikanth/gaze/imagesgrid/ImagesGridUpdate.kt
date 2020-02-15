@@ -26,13 +26,16 @@ class ImagesGridUpdate(private val clock: Clock) : Update<ImagesGridModel, Image
       is ImageClicked -> {
         dispatch(ShowImageDetails(event.date))
       }
-      ImagesListReachedEnd -> {
+      is ImagesListReachedEnd -> {
         val images = model.images!!
         // Subtracting 1 day to make sure we are not fetching the last image date again
         val endDate = images.last().date.minusDays(1)
         val startDate = endDate.minusDays(model.numberOfImagesToLoad.toLong())
 
         dispatch(FetchMoreImages(startDate, endDate))
+      }
+      is FetchMoreImagesSuccess -> {
+        next(model.fetchMoreImageSuccess())
       }
     }
   }

@@ -95,7 +95,8 @@ class ImagesGridUpdateTest {
       .whenEvent(FetchImagesFail(errorMessage))
       .then(
         assertThatNext(
-          hasModel(defaultModel.fetchImagesFail(errorMessage))
+          hasModel(defaultModel.fetchImagesFail(errorMessage)),
+          hasNoEffects()
         )
       )
   }
@@ -133,6 +134,23 @@ class ImagesGridUpdateTest {
         assertThatNext(
           hasNoModel(),
           hasEffects(FetchMoreImages(expectedStartDate, expectedEndDate) as ImagesGridEffect)
+        )
+      )
+  }
+
+  @Test
+  fun `when fetch more images is success, then update ui`() {
+    val image = GazeImage(LocalDate.parse("2018-01-01"))
+    val images = listOf(image)
+    val modelWithImages = defaultModel.imagesLoaded(images)
+
+    updateSpec
+      .given(modelWithImages)
+      .whenEvent(FetchMoreImagesSuccess)
+      .then(
+        assertThatNext(
+          hasModel(modelWithImages.fetchMoreImageSuccess()),
+          hasNoEffects()
         )
       )
   }
