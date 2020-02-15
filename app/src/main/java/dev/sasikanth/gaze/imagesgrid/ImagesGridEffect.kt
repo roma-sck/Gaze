@@ -6,7 +6,7 @@ sealed class ImagesGridEffect
 
 object LoadImages : ImagesGridEffect()
 
-data class FetchImages(val numberOfImagesToLoad: Int) : ImagesGridEffect()
+data class FetchImages(val startDate: LocalDate, val endDate: LocalDate) : ImagesGridEffect()
 
 data class ShowImageDetails(val date: LocalDate) : ImagesGridEffect()
 

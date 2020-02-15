@@ -6,12 +6,14 @@ import com.spotify.mobius.test.NextMatchers.hasNoEffects
 import com.spotify.mobius.test.NextMatchers.hasNoModel
 import com.spotify.mobius.test.UpdateSpec
 import com.spotify.mobius.test.UpdateSpec.assertThatNext
+import dev.sasikanth.gaze.utils.TestClock
 import org.junit.Test
 import org.threeten.bp.LocalDate
 
 class ImagesGridUpdateTest {
+  private val testClock = TestClock()
   private val defaultModel = ImagesGridModel.create(numberOfImagesToLoad = 15)
-  private val updateSpec = UpdateSpec<ImagesGridModel, ImagesGridEvent, ImagesGridEffect>(ImagesGridUpdate())
+  private val updateSpec = UpdateSpec<ImagesGridModel, ImagesGridEvent, ImagesGridEffect>(ImagesGridUpdate(testClock))
 
   @Test
   fun `when images are loaded, then update ui`() {
@@ -34,13 +36,39 @@ class ImagesGridUpdateTest {
   fun `when there are no images, then fetch images`() {
     val images = emptyList<GazeImage>()
 
+    val expectedStartDate = LocalDate.parse("2018-01-01")
+    val expectedEndDate = LocalDate.parse("2018-01-16")
+
+    testClock.setDate(LocalDate.parse("2018-01-16"))
+
     updateSpec
       .given(defaultModel)
       .whenEvent(ImagesLoaded(images))
       .then(
         assertThatNext(
           hasNoModel(),
-          hasEffects(FetchImages(defaultModel.numberOfImagesToLoad) as ImagesGridEffect)
+          hasEffects(FetchImages(expectedStartDate, expectedEndDate) as ImagesGridEffect)
+        )
+      )
+  }
+
+  @Test
+  fun `when latest image date is not current date, then fetch images`() {
+    val image = GazeImage(LocalDate.parse("2020-02-05"))
+    val images = listOf(image)
+
+    val expectedStartDate = LocalDate.parse("2020-02-06")
+    val expectedEndDate = LocalDate.parse("2020-02-15")
+
+    testClock.setDate(LocalDate.parse("2020-02-15"))
+
+    updateSpec
+      .given(defaultModel)
+      .whenEvent(ImagesLoaded(images))
+      .then(
+        assertThatNext(
+          hasModel(defaultModel.imagesLoaded(images)),
+          hasEffects(FetchImages(expectedStartDate, expectedEndDate) as ImagesGridEffect)
         )
       )
   }
