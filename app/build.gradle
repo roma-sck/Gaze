@@ -39,6 +39,9 @@ android {
 
   kotlinOptions {
     jvmTarget = JavaVersion.VERSION_1_8
+
+    // Enabling experimental coroutines APIs
+    freeCompilerArgs += "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi"
   }
 }
 
@@ -54,8 +57,12 @@ dependencies {
 
   implementation "com.jakewharton.threetenabp:threetenabp:$versions.threeten"
 
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.coroutines"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines"
+
   testImplementation "junit:junit:$versions.jUnit"
   testImplementation "com.spotify.mobius:mobius-test:$versions.mobius"
+  testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$versions.coroutines"
 
   androidTestImplementation "androidx.test.ext:junit:$versions.jUnitExt"
   androidTestImplementation "androidx.test.espresso:espresso-core:$versions.espressoCore"
