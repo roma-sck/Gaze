@@ -5,7 +5,7 @@ class ImagesGridUiRenderer(
 ) {
 
   fun render(model: ImagesGridModel) {
-    if (model.images == null) {
+    if (model.images.isNullOrEmpty()) {
       ui.showProgress()
     }
   }
