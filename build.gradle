@@ -17,7 +17,8 @@ buildscript {
       mockitoKotlin   : '2.2.0',
       retrofit        : '2.7.1',
       moshi           : '1.9.2',
-      dagger          : '2.26'
+      dagger          : '2.26',
+      navigation      : '2.2.1'
   ]
 
   repositories {
