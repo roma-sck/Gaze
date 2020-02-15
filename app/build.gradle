@@ -63,6 +63,8 @@ dependencies {
   implementation "androidx.room:room-ktx:$versions.room"
   kapt "androidx.room:room-compiler:$versions.room"
 
+  implementation "com.squareup.retrofit2:retrofit:$versions.retrofit"
+
   testImplementation "junit:junit:$versions.jUnit"
   testImplementation "com.spotify.mobius:mobius-test:$versions.mobius"
   testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$versions.coroutines"
