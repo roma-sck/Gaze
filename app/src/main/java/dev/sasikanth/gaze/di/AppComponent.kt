@@ -3,6 +3,7 @@ package dev.sasikanth.gaze.di
 import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
+import dev.sasikanth.gaze.MainActivity
 import javax.inject.Singleton
 
 @Singleton
@@ -13,4 +14,6 @@ interface AppComponent {
   interface Factory {
     fun create(@BindsInstance context: Context): AppComponent
   }
+
+  fun inject(mainActivity: MainActivity)
 }
