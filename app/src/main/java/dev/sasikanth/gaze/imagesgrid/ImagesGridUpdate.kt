@@ -15,6 +15,9 @@ class ImagesGridUpdate : Update<ImagesGridModel, ImagesGridEvent, ImagesGridEffe
           dispatch<ImagesGridModel, ImagesGridEffect>(FetchImages(model.numberOfImagesToLoad))
         }
       }
+      is FetchImagesSuccess -> {
+        next(model.fetchImagesSuccess())
+      }
     }
   }
 }

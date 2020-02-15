@@ -42,4 +42,17 @@ class ImagesGridUpdateTest {
         )
       )
   }
+
+  @Test
+  fun `when fetch images is successful, then update ui`() {
+    updateSpec
+      .given(defaultModel)
+      .whenEvent(FetchImagesSuccess)
+      .then(
+        assertThatNext(
+          hasModel(defaultModel.fetchImagesSuccess()),
+          hasNoEffects()
+        )
+      )
+  }
 }
