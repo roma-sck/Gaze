@@ -10,6 +10,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.threeten.bp.LocalDate
 
 class ImagesGridEffectHandler(
   private val gazeRepository: GazeRepository,
@@ -31,16 +32,12 @@ class ImagesGridEffectHandler(
           }
           is FetchImages -> {
             coroutineScope.launch {
-              try {
-                val pictures = gazeRepository.fetchPictures(effect.startDate, effect.endDate)
-
-                withContext(dispatcherProvider.io) {
-                  gazeRepository.insertPictures(pictures)
-                }
-                output.accept(FetchImagesSuccess)
-              } catch (e: Exception) {
-                output.accept(FetchImagesFail(e.localizedMessage.orEmpty()))
-              }
+              fetchImages(effect.startDate, effect.endDate, output)
+            }
+          }
+          is FetchMoreImages -> {
+            coroutineScope.launch {
+              fetchMoreImages(effect.startDate, effect.endDate, output)
             }
           }
         }
@@ -49,6 +46,41 @@ class ImagesGridEffectHandler(
       override fun dispose() {
         coroutineScope.cancel()
       }
+    }
+  }
+
+  // TODO: Get opinion on these methods
+  private suspend fun fetchImages(
+    startDate: LocalDate,
+    endDate: LocalDate,
+    output: Consumer<ImagesGridEvent>
+  ) {
+    try {
+      val pictures = gazeRepository.fetchPictures(startDate, endDate)
+
+      withContext(dispatcherProvider.io) {
+        gazeRepository.insertPictures(pictures)
+      }
+      output.accept(FetchImagesSuccess)
+    } catch (e: Exception) {
+      output.accept(FetchImagesFail(e.localizedMessage.orEmpty()))
+    }
+  }
+
+  private suspend fun fetchMoreImages(
+    startDate: LocalDate,
+    endDate: LocalDate,
+    output: Consumer<ImagesGridEvent>
+  ) {
+    try {
+      val pictures = gazeRepository.fetchPictures(startDate, endDate)
+
+      withContext(dispatcherProvider.io) {
+        gazeRepository.insertPictures(pictures)
+      }
+      output.accept(FetchMoreImagesSuccess)
+    } catch (e: Exception) {
+      output.accept(FetchMoreImagesFail(e.localizedMessage.orEmpty()))
     }
   }
 }
