@@ -14,7 +14,8 @@ import org.threeten.bp.LocalDate
 
 class ImagesGridEffectHandler(
   private val gazeRepository: GazeRepository,
-  private val dispatcherProvider: DispatcherProvider
+  private val dispatcherProvider: DispatcherProvider,
+  val viewEffects: Consumer<ImagesGridViewEffect>
 ) : Connectable<ImagesGridEffect, ImagesGridEvent> {
 
   override fun connect(output: Consumer<ImagesGridEvent>): Connection<ImagesGridEffect> {
@@ -39,6 +40,9 @@ class ImagesGridEffectHandler(
             coroutineScope.launch {
               fetchMoreImages(effect.startDate, effect.endDate, output)
             }
+          }
+          is ShowImageDetails -> {
+            viewEffects.accept(OpenImageDetailsPage(effect.date))
           }
         }
       }

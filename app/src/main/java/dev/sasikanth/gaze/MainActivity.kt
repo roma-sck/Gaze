@@ -38,10 +38,10 @@ class MainActivity : AppCompatActivity() {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       return MobiusLoopViewModel.create<ImagesGridModel, ImagesGridEvent, ImagesGridEffect, ImagesGridViewEffect>(
-        Function {
+        Function { viewEffectsConsumer ->
           return@Function Mobius.loop(
             ImagesGridUpdate(pacificClock),
-            ImagesGridEffectHandler(repository, dispatcherProvider)
+            ImagesGridEffectHandler(repository, dispatcherProvider, viewEffectsConsumer)
           )
         },
         ImagesGridModel.create(numberOfImagesToLoad = 15),

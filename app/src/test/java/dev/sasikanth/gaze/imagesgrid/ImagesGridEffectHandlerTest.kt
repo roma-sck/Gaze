@@ -20,7 +20,8 @@ class ImagesGridEffectHandlerTest {
   private val gazeRepository = mock<GazeRepository>()
   private val testDispatcherProvider = TestDispatcherProvider()
   private val consumer = RecordingConsumer<ImagesGridEvent>()
-  private val effectHandler = ImagesGridEffectHandler(gazeRepository, testDispatcherProvider)
+  private val viewEffectsConsumer = RecordingConsumer<ImagesGridViewEffect>()
+  private val effectHandler = ImagesGridEffectHandler(gazeRepository, testDispatcherProvider, viewEffectsConsumer)
 
   private lateinit var connection: Connection<ImagesGridEffect>
 
@@ -100,6 +101,15 @@ class ImagesGridEffectHandlerTest {
     connection.accept(FetchMoreImages(startDate, endDate))
 
     consumer.assertValues(FetchMoreImagesFail("Failed to load images"))
+  }
+
+  @Test
+  fun `open image details page, when show image detail page effect is received`() {
+    val image = ImageMocker.image(LocalDate.parse("2028-01-22"))
+
+    connection.accept(ShowImageDetails(image.date))
+
+    viewEffectsConsumer.assertValues(OpenImageDetailsPage(image.date))
   }
 
   @After
