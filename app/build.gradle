@@ -3,6 +3,9 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
+def localProperties = new Properties()
+localProperties.load(new FileInputStream(rootProject.file("local.properties")))
+
 android {
   compileSdkVersion 29
   buildToolsVersion "29.0.2"
@@ -15,6 +18,11 @@ android {
     versionName "1.0.0"
 
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+    def apiKey = localProperties['apiKey']
+    if (apiKey != null) {
+      buildConfigField "String", "API_KEY", apiKey
+    }
   }
 
   buildTypes {
