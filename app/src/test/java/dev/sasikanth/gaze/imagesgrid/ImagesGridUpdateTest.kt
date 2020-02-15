@@ -7,6 +7,7 @@ import com.spotify.mobius.test.NextMatchers.hasNoModel
 import com.spotify.mobius.test.UpdateSpec
 import com.spotify.mobius.test.UpdateSpec.assertThatNext
 import dev.sasikanth.gaze.image.GazeImage
+import dev.sasikanth.gaze.utils.ImageMocker
 import dev.sasikanth.gaze.utils.TestClock
 import org.junit.Test
 import org.threeten.bp.LocalDate
@@ -19,7 +20,7 @@ class ImagesGridUpdateTest {
   @Test
   fun `when images are loaded, then update ui`() {
     val date = LocalDate.parse("2020-02-15")
-    val image = GazeImage(date)
+    val image = ImageMocker.image(date)
     val images = listOf(image)
 
     updateSpec
@@ -55,7 +56,7 @@ class ImagesGridUpdateTest {
 
   @Test
   fun `when latest image date is not current date, then fetch images`() {
-    val image = GazeImage(LocalDate.parse("2020-02-05"))
+    val image = ImageMocker.image(LocalDate.parse("2020-02-05"))
     val images = listOf(image)
 
     val expectedStartDate = LocalDate.parse("2020-02-06")
@@ -105,7 +106,7 @@ class ImagesGridUpdateTest {
   @Test
   fun `when image is clicked, then show image details`() {
     val date = LocalDate.parse("2020-02-14")
-    val image = GazeImage(date)
+    val image = ImageMocker.image(date)
     val images = listOf(image)
 
     updateSpec
@@ -121,8 +122,8 @@ class ImagesGridUpdateTest {
 
   @Test
   fun `when images list reaches end, then fetch more images`() {
-    val image1 = GazeImage(LocalDate.parse("2018-01-02"))
-    val image2 = GazeImage(LocalDate.parse("2018-01-01"))
+    val image1 = ImageMocker.image(LocalDate.parse("2018-01-02"))
+    val image2 = ImageMocker.image(LocalDate.parse("2018-01-01"))
     val images = listOf(image1, image2)
 
     val expectedStartDate = LocalDate.parse("2017-12-16")
@@ -141,7 +142,7 @@ class ImagesGridUpdateTest {
 
   @Test
   fun `when fetch more images is success, then update ui`() {
-    val image = GazeImage(LocalDate.parse("2018-01-01"))
+    val image = ImageMocker.image(LocalDate.parse("2018-01-01"))
     val images = listOf(image)
     val modelWithImages = defaultModel.imagesLoaded(images)
 
@@ -158,7 +159,7 @@ class ImagesGridUpdateTest {
 
   @Test
   fun `when fetch more images is unsuccessful, then udpate ui`() {
-    val image = GazeImage(LocalDate.parse("2018-01-01"))
+    val image = ImageMocker.image(LocalDate.parse("2018-01-01"))
     val images = listOf(image)
     val modelWithImages = defaultModel.imagesLoaded(images)
 
