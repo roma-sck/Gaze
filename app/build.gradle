@@ -76,6 +76,8 @@ dependencies {
   implementation "androidx.navigation:navigation-fragment-ktx:$versions.navigation"
   implementation "androidx.navigation:navigation-ui-ktx:$versions.navigation"
 
+  implementation "com.google.android.material:material:$versions.material"
+
   testImplementation "junit:junit:$versions.jUnit"
   testImplementation "com.spotify.mobius:mobius-test:$versions.mobius"
   testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$versions.coroutines"
