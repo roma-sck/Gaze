@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -25,6 +26,10 @@ object ProgressGridItem : GridItem() {
   override val key: Int = Random.nextInt()
 }
 
+data class ErrorGridItem(val error: String) : GridItem() {
+  override val key: Int = Random.nextInt()
+}
+
 object DiffCallback : DiffUtil.ItemCallback<GridItem>() {
   override fun areItemsTheSame(oldItem: GridItem, newItem: GridItem): Boolean {
     return oldItem.key == newItem.key
@@ -41,6 +46,7 @@ class ImagesGridAdapter : ListAdapter<GridItem, RecyclerView.ViewHolder>(DiffCal
   companion object {
     const val GRID_ITEM_TYPE_IMAGE = 0
     const val GRID_ITEM_TYPE_PROGRESS = 1
+    const val GRID_ITEM_TYPE_ERROR = 2
   }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -54,14 +60,24 @@ class ImagesGridAdapter : ListAdapter<GridItem, RecyclerView.ViewHolder>(DiffCal
         val view = inflater.inflate(R.layout.grid_progress_item, parent, false)
         ProgressViewHolder(view)
       }
+      GRID_ITEM_TYPE_ERROR -> {
+        val view = inflater.inflate(R.layout.grid_error_item, parent, false)
+        ErrorViewHolder(view)
+      }
       else -> throw IllegalArgumentException("Unknown view type: $viewType")
     }
   }
 
   override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-    if (holder is ImageViewHolder) {
-      val item = getItem(position) as ImageGridItem
-      holder.render(item.image)
+    when (holder) {
+      is ImageViewHolder -> {
+        val item = getItem(position) as ImageGridItem
+        holder.render(item.image)
+      }
+      is ErrorViewHolder -> {
+        val item = getItem(position) as ErrorGridItem
+        holder.render(item.error)
+      }
     }
   }
 
@@ -69,6 +85,7 @@ class ImagesGridAdapter : ListAdapter<GridItem, RecyclerView.ViewHolder>(DiffCal
     return when (getItem(position)) {
       is ImageGridItem -> GRID_ITEM_TYPE_IMAGE
       is ProgressGridItem -> GRID_ITEM_TYPE_PROGRESS
+      is ErrorGridItem -> GRID_ITEM_TYPE_ERROR
     }
   }
 
@@ -82,4 +99,12 @@ class ImagesGridAdapter : ListAdapter<GridItem, RecyclerView.ViewHolder>(DiffCal
   }
 
   class ProgressViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+
+  class ErrorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    private val errorTextView: TextView = itemView.findViewById(R.id.errorTextView)
+
+    fun render(error: String) {
+      errorTextView.text = error
+    }
+  }
 }

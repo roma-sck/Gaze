@@ -56,4 +56,25 @@ class ImagesGridUiRendererTest {
     verify(ui).showImages(gridItems)
     verifyNoMoreInteractions(ui)
   }
+
+  @Test
+  fun `when fetch more images status is failed, then show error grid item`() {
+    // given
+    val errorMessage = "Failed to load images"
+    val image = ImageMocker.image(LocalDate.parse("2020-01-23"))
+    val images = listOf(image)
+    val model = ImagesGridModel.create(numberOfImagesToLoad = 15)
+      .imagesLoaded(images)
+      .fetchMoreImagesFail(errorMessage)
+
+    val expectedGridItems = listOf(ImageGridItem(image)) + listOf(ErrorGridItem(errorMessage))
+
+    // when
+    uiRenderer.render(model)
+
+    // then
+    verify(ui).hideProgress()
+    verify(ui).showImages(expectedGridItems)
+    verifyNoMoreInteractions(ui)
+  }
 }

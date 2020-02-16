@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.spotify.mobius.android.MobiusLoopViewModel
 import dev.sasikanth.gaze.R
+import dev.sasikanth.gaze.imagesgrid.ImagesGridAdapter.Companion.GRID_ITEM_TYPE_ERROR
 import dev.sasikanth.gaze.imagesgrid.ImagesGridAdapter.Companion.GRID_ITEM_TYPE_IMAGE
 import dev.sasikanth.gaze.imagesgrid.ImagesGridAdapter.Companion.GRID_ITEM_TYPE_PROGRESS
 import dev.sasikanth.gaze.utils.doOnApplyWindowInsets
@@ -40,6 +41,7 @@ class ImagesGridFragment : Fragment(R.layout.fragment_images_grid), ImagesGridUi
             return when (val itemViewType = gridAdapter.getItemViewType(position)) {
               GRID_ITEM_TYPE_IMAGE -> 1
               GRID_ITEM_TYPE_PROGRESS -> 2
+              GRID_ITEM_TYPE_ERROR -> 2
               else -> throw IllegalArgumentException("Unknown item view type: $itemViewType")
             }
           }
