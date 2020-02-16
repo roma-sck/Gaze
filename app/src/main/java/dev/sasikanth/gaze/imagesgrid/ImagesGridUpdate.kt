@@ -32,7 +32,7 @@ class ImagesGridUpdate(private val clock: Clock) : Update<ImagesGridModel, Image
         val endDate = images.last().date.minusDays(1)
         val startDate = endDate.minusDays(model.numberOfImagesToLoad.toLong())
 
-        dispatch(FetchMoreImages(startDate, endDate))
+        next(model.fetchingMoreImages(), FetchMoreImages(startDate, endDate))
       }
       is FetchMoreImagesSuccess -> {
         next(model.fetchMoreImageSuccess())

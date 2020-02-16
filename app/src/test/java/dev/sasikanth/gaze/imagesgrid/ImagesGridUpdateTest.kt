@@ -129,12 +129,14 @@ class ImagesGridUpdateTest {
     val expectedStartDate = LocalDate.parse("2017-12-16")
     val expectedEndDate = LocalDate.parse("2017-12-31")
 
+    val modelWithImages = defaultModel.imagesLoaded(images)
+
     updateSpec
-      .given(defaultModel.imagesLoaded(images))
+      .given(modelWithImages)
       .whenEvent(ImagesListReachedEnd)
       .then(
         assertThatNext(
-          hasNoModel(),
+          hasModel(modelWithImages.fetchingMoreImages()),
           hasEffects(FetchMoreImages(expectedStartDate, expectedEndDate) as ImagesGridEffect)
         )
       )
