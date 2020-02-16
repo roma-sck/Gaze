@@ -46,12 +46,14 @@ class ImagesGridUiRendererTest {
     val model = ImagesGridModel.create(numberOfImagesToLoad = 15)
       .imagesLoaded(images)
 
+    val gridItems = listOf(ImageGridItem(image)) + listOf(ProgressGridItem)
+
     // when
     uiRenderer.render(model)
 
     // then
     verify(ui).hideProgress()
-    verify(ui).showImages(images)
+    verify(ui).showImages(gridItems)
     verifyNoMoreInteractions(ui)
   }
 }

@@ -8,8 +8,11 @@ class ImagesGridUiRenderer(
     if (model.images.isNullOrEmpty()) {
       ui.showProgress()
     } else {
+      val gridImages = model.images.map(::ImageGridItem)
+      val gridItems = gridImages + listOf(ProgressGridItem)
+
       ui.hideProgress()
-      ui.showImages(model.images)
+      ui.showImages(gridItems)
     }
   }
 }

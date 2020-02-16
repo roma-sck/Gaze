@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.spotify.mobius.android.MobiusLoopViewModel
 import dev.sasikanth.gaze.R
-import dev.sasikanth.gaze.image.GazeImage
 import dev.sasikanth.gaze.imagesgrid.ImagesGridAdapter.Companion.GRID_ITEM_TYPE_IMAGE
 import dev.sasikanth.gaze.imagesgrid.ImagesGridAdapter.Companion.GRID_ITEM_TYPE_PROGRESS
 import dev.sasikanth.gaze.utils.doOnApplyWindowInsets
@@ -79,11 +78,7 @@ class ImagesGridFragment : Fragment(R.layout.fragment_images_grid), ImagesGridUi
     imagesGrid.isVisible = true
   }
 
-  override fun showImages(images: List<GazeImage>) {
-    val gridImages = images
-      .map { ImageGridItem(it) }
-    val gridItems = gridImages + listOf(ProgressGridItem)
-
+  override fun showImages(gridItems: List<GridItem>) {
     gridAdapter.submitList(gridItems)
   }
 }
