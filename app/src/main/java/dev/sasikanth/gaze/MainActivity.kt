@@ -1,6 +1,7 @@
 package dev.sasikanth.gaze
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -18,6 +19,7 @@ import dev.sasikanth.gaze.imagesgrid.ImagesGridModel
 import dev.sasikanth.gaze.imagesgrid.ImagesGridUpdate
 import dev.sasikanth.gaze.imagesgrid.ImagesGridViewEffect
 import dev.sasikanth.gaze.utils.DispatcherProvider
+import kotlinx.android.synthetic.main.activity_main.*
 import org.threeten.bp.Clock
 import javax.inject.Inject
 
@@ -54,6 +56,8 @@ class MainActivity : AppCompatActivity() {
     injector.inject(this)
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
+
+    activityRootView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 
     viewModel = ViewModelProvider(this, viewModelFactory).get()
   }

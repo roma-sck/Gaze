@@ -3,6 +3,7 @@ package dev.sasikanth.gaze.imagesgrid
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -13,6 +14,7 @@ import dev.sasikanth.gaze.R
 import dev.sasikanth.gaze.image.GazeImage
 import dev.sasikanth.gaze.imagesgrid.ImagesGridAdapter.Companion.GRID_ITEM_TYPE_IMAGE
 import dev.sasikanth.gaze.imagesgrid.ImagesGridAdapter.Companion.GRID_ITEM_TYPE_PROGRESS
+import dev.sasikanth.gaze.utils.doOnApplyWindowInsets
 import kotlinx.android.synthetic.main.fragment_images_grid.*
 
 class ImagesGridFragment : Fragment(R.layout.fragment_images_grid), ImagesGridUi {
@@ -60,6 +62,10 @@ class ImagesGridFragment : Fragment(R.layout.fragment_images_grid), ImagesGridUi
           }
         }
       })
+
+      doOnApplyWindowInsets { view, insets, padding ->
+        view.updatePadding(top = padding.top + insets.systemWindowInsetTop, bottom = padding.bottom + insets.systemWindowInsetBottom)
+      }
     }
   }
 
