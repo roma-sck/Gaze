@@ -46,7 +46,7 @@ class ImagesGridUiRendererTest {
     val model = ImagesGridModel.create(numberOfImagesToLoad = 15)
       .imagesLoaded(images)
 
-    val gridItems = listOf(ImageGridItem(image)) + listOf(ProgressGridItem)
+    val gridItems = listOf(ImageGridItem(image))
 
     // when
     uiRenderer.render(model)
@@ -68,6 +68,26 @@ class ImagesGridUiRendererTest {
       .fetchMoreImagesFail(errorMessage)
 
     val expectedGridItems = listOf(ImageGridItem(image)) + listOf(ErrorGridItem(errorMessage))
+
+    // when
+    uiRenderer.render(model)
+
+    // then
+    verify(ui).hideProgress()
+    verify(ui).showImages(expectedGridItems)
+    verifyNoMoreInteractions(ui)
+  }
+
+  @Test
+  fun `when fetching more images, then show progress view in grid`() {
+    // given
+    val image = ImageMocker.image(LocalDate.parse("2020-02-14"))
+    val images = listOf(image)
+    val model = ImagesGridModel.create(numberOfImagesToLoad = 15)
+      .imagesLoaded(images)
+      .fetchingMoreImages()
+
+    val expectedGridItems = listOf(ImageGridItem(image)) + listOf(ProgressGridItem)
 
     // when
     uiRenderer.render(model)

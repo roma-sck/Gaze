@@ -11,10 +11,16 @@ class ImagesGridUiRenderer(
       ui.showProgress()
     } else {
       val gridImages = model.images.map(::ImageGridItem)
-      val gridItems = if (model.fetchMoreImagesStatus is FetchResult.Fail) {
-        gridImages + listOf(ErrorGridItem(model.fetchMoreImagesStatus.error))
-      } else {
-        gridImages + listOf(ProgressGridItem)
+      val gridItems = when (model.fetchMoreImagesStatus) {
+        is FetchResult.Fail -> {
+          gridImages + listOf(ErrorGridItem(model.fetchMoreImagesStatus.error))
+        }
+        is FetchResult.Loading -> {
+          gridImages + listOf(ProgressGridItem)
+        }
+        else -> {
+          gridImages
+        }
       }
 
       ui.hideProgress()
