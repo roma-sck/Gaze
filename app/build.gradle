@@ -78,6 +78,8 @@ dependencies {
 
   implementation "com.google.android.material:material:$versions.material"
 
+  implementation "io.coil-kt:coil:$versions.coil"
+
   testImplementation "junit:junit:$versions.jUnit"
   testImplementation "com.spotify.mobius:mobius-test:$versions.mobius"
   testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$versions.coroutines"
