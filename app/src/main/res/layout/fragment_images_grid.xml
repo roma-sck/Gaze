@@ -20,10 +20,15 @@
     android:id="@+id/imagesGrid"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:padding="2dp"
     android:visibility="gone"
+    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent" />
+    app:layout_constraintTop_toTopOf="parent"
+    app:spanCount="@integer/images_grid_span_count" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
