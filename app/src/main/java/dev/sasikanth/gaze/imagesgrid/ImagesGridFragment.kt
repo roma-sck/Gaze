@@ -20,7 +20,11 @@ import kotlinx.android.synthetic.main.fragment_images_grid.*
 class ImagesGridFragment : Fragment(R.layout.fragment_images_grid), ImagesGridUi {
 
   private val viewModel: MobiusLoopViewModel<ImagesGridModel, ImagesGridEvent, ImagesGridEffect, ImagesGridViewEffect> by activityViewModels()
-  private val gridAdapter = ImagesGridAdapter()
+  private val gridAdapter = ImagesGridAdapter(
+    retryFetchMoreImagesClicked = {
+      viewModel.dispatchEvent(RetryFetchMoreImageClicked)
+    }
+  )
 
   private val uiRenderer by lazy {
     ImagesGridUiRenderer(this)

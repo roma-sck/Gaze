@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.api.load
+import com.google.android.material.button.MaterialButton
 import dev.sasikanth.gaze.R
 import dev.sasikanth.gaze.image.GazeImage
 import kotlin.random.Random
@@ -41,7 +42,9 @@ object DiffCallback : DiffUtil.ItemCallback<GridItem>() {
   }
 }
 
-class ImagesGridAdapter : ListAdapter<GridItem, RecyclerView.ViewHolder>(DiffCallback) {
+class ImagesGridAdapter(
+  private val retryFetchMoreImagesClicked: () -> Unit
+) : ListAdapter<GridItem, RecyclerView.ViewHolder>(DiffCallback) {
 
   companion object {
     const val GRID_ITEM_TYPE_IMAGE = 0
@@ -62,7 +65,11 @@ class ImagesGridAdapter : ListAdapter<GridItem, RecyclerView.ViewHolder>(DiffCal
       }
       GRID_ITEM_TYPE_ERROR -> {
         val view = inflater.inflate(R.layout.grid_error_item, parent, false)
-        ErrorViewHolder(view)
+        ErrorViewHolder(view).apply {
+          retryFetchMoreImagesButton.setOnClickListener {
+            retryFetchMoreImagesClicked()
+          }
+        }
       }
       else -> throw IllegalArgumentException("Unknown view type: $viewType")
     }
@@ -102,6 +109,7 @@ class ImagesGridAdapter : ListAdapter<GridItem, RecyclerView.ViewHolder>(DiffCal
 
   class ErrorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val errorTextView: TextView = itemView.findViewById(R.id.errorTextView)
+    val retryFetchMoreImagesButton: MaterialButton = itemView.findViewById(R.id.retryFetchMoreImages)
 
     fun render(error: String) {
       errorTextView.text = error
