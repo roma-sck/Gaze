@@ -27,12 +27,7 @@ class ImagesGridUpdate(private val clock: Clock) : Update<ImagesGridModel, Image
         dispatch(ShowImageDetails(event.date))
       }
       is ImagesListReachedEnd -> {
-        val images = model.images!!
-        // Subtracting 1 day to make sure we are not fetching the last image date again
-        val endDate = images.last().date.minusDays(1)
-        val startDate = endDate.minusDays(model.numberOfImagesToLoad.toLong())
-
-        next(model.fetchingMoreImages(), FetchMoreImages(startDate, endDate))
+        fetchMoreImages(model)
       }
       is FetchMoreImagesSuccess -> {
         next(model.fetchMoreImageSuccess())
@@ -40,7 +35,19 @@ class ImagesGridUpdate(private val clock: Clock) : Update<ImagesGridModel, Image
       is FetchMoreImagesFail -> {
         next(model.fetchMoreImagesFail(event.errorMessage))
       }
+      is RetryFetchMoreImageClicked -> {
+        fetchMoreImages(model)
+      }
     }
+  }
+
+  private fun fetchMoreImages(model: ImagesGridModel): Next<ImagesGridModel, ImagesGridEffect> {
+    val images = model.images!!
+    // Subtracting 1 day to make sure we are not fetching the last image date again
+    val endDate = images.last().date.minusDays(1)
+    val startDate = endDate.minusDays(model.numberOfImagesToLoad.toLong())
+
+    return next(model.fetchingMoreImages(), FetchMoreImages(startDate, endDate))
   }
 
   private fun fetchLatestImagesIfNecessary(

@@ -18,3 +18,5 @@ object ImagesListReachedEnd : ImagesGridEvent()
 object FetchMoreImagesSuccess : ImagesGridEvent()
 
 data class FetchMoreImagesFail(val errorMessage: String) : ImagesGridEvent()
+
+object RetryFetchMoreImageClicked : ImagesGridEvent()

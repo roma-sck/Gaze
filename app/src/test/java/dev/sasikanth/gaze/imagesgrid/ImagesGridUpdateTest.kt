@@ -177,4 +177,26 @@ class ImagesGridUpdateTest {
         )
       )
   }
+
+  @Test
+  fun `when retry fetch more images button is clicked, then retry fetch more images`() {
+    val image1 = ImageMocker.image(LocalDate.parse("2018-01-02"))
+    val image2 = ImageMocker.image(LocalDate.parse("2018-01-01"))
+    val images = listOf(image1, image2)
+
+    val expectedStartDate = LocalDate.parse("2017-12-16")
+    val expectedEndDate = LocalDate.parse("2017-12-31")
+
+    val modelWithImages = defaultModel.imagesLoaded(images)
+
+    updateSpec
+      .given(modelWithImages)
+      .whenEvent(RetryFetchMoreImageClicked)
+      .then(
+        assertThatNext(
+          hasModel(modelWithImages.fetchingMoreImages()),
+          hasEffects(FetchMoreImages(expectedStartDate, expectedEndDate) as ImagesGridEffect)
+        )
+      )
+  }
 }
