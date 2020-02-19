@@ -26,6 +26,16 @@ class ImagesGridFragment : Fragment(R.layout.fragment_images_grid), ImagesGridUi
     }
   )
 
+  private val adapterDataObserver = object : RecyclerView.AdapterDataObserver() {
+    override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+      super.onItemRangeInserted(positionStart, itemCount)
+      val viewType = gridAdapter.getItemViewType(positionStart)
+      if (viewType == GRID_ITEM_TYPE_PROGRESS || viewType == GRID_ITEM_TYPE_ERROR) {
+        imagesGrid.smoothScrollToPosition(positionStart)
+      }
+    }
+  }
+
   private val uiRenderer by lazy {
     ImagesGridUiRenderer(this)
   }
@@ -72,6 +82,13 @@ class ImagesGridFragment : Fragment(R.layout.fragment_images_grid), ImagesGridUi
         view.updatePadding(top = padding.top + insets.systemWindowInsetTop, bottom = padding.bottom + insets.systemWindowInsetBottom)
       }
     }
+
+    gridAdapter.registerAdapterDataObserver(adapterDataObserver)
+  }
+
+  override fun onDestroyView() {
+    gridAdapter.unregisterAdapterDataObserver(adapterDataObserver)
+    super.onDestroyView()
   }
 
   override fun showProgress() {
