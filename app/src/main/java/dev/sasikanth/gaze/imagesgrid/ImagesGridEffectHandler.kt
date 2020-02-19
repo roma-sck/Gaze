@@ -44,6 +44,11 @@ class ImagesGridEffectHandler(
           is ShowImageDetails -> {
             viewEffects.accept(OpenImageDetailsPage(effect.date))
           }
+          is RetryFetchMoreImages -> {
+            coroutineScope.launch {
+              fetchMoreImages(effect.startDate, effect.endDate, output)
+            }
+          }
         }
       }
 

@@ -112,6 +112,24 @@ class ImagesGridEffectHandlerTest {
     viewEffectsConsumer.assertValues(OpenImageDetailsPage(image.date))
   }
 
+  @Test
+  fun `retry fetching more images, when retry fetch more images effect is received`() = runBlockingTest {
+    val startDate = LocalDate.parse("2018-01-01")
+    val endDate = LocalDate.parse("2018-01-05")
+
+    val image1 = ImageMocker.image(LocalDate.parse("2018-01-01"))
+    val image2 = ImageMocker.image(LocalDate.parse("2018-01-02"))
+    val image3 = ImageMocker.image(LocalDate.parse("2018-01-03"))
+    val image4 = ImageMocker.image(LocalDate.parse("2018-01-04"))
+    val image5 = ImageMocker.image(LocalDate.parse("2018-01-05"))
+
+    whenever(gazeRepository.fetchPictures(startDate, endDate)) doReturn listOf(image1, image2, image3, image4, image5)
+
+    connection.accept(RetryFetchMoreImages(startDate, endDate))
+
+    consumer.assertValues(FetchMoreImagesSuccess)
+  }
+
   @After
   fun tearDown() {
     connection.dispose()
