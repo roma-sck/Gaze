@@ -49,6 +49,11 @@ class ImagesGridEffectHandler(
               fetchMoreImages(effect.startDate, effect.endDate, output)
             }
           }
+          is RetryFetchImages -> {
+            coroutineScope.launch {
+              fetchImages(effect.startDate, effect.endDate, output)
+            }
+          }
         }
       }
 

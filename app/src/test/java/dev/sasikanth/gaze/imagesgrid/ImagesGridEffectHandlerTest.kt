@@ -1,5 +1,6 @@
 package dev.sasikanth.gaze.imagesgrid
 
+import com.nhaarman.mockitokotlin2.doNothing
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.doThrow
 import com.nhaarman.mockitokotlin2.mock
@@ -128,6 +129,22 @@ class ImagesGridEffectHandlerTest {
     connection.accept(RetryFetchMoreImages(startDate, endDate))
 
     consumer.assertValues(FetchMoreImagesSuccess)
+  }
+
+  @Test
+  fun `retry fetch images, when retry fetch images effect is received`() = runBlockingTest {
+    val startDate = LocalDate.parse("2018-01-01")
+    val endDate = LocalDate.parse("2018-01-05")
+
+    val image1 = ImageMocker.image(LocalDate.parse("2018-01-01"))
+    val image2 = ImageMocker.image(LocalDate.parse("2018-01-02"))
+
+    whenever(gazeRepository.fetchPictures(startDate, endDate)) doReturn listOf(image1, image2)
+    doNothing().whenever(gazeRepository).insertPictures(listOf(image1, image2))
+
+    connection.accept(RetryFetchImages(startDate, endDate))
+
+    consumer.assertValues(FetchImagesSuccess)
   }
 
   @After
