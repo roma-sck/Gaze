@@ -9,6 +9,11 @@ class ImagesGridUiRenderer(
   fun render(model: ImagesGridModel) {
     if (model.images.isNullOrEmpty()) {
       ui.showProgress()
+
+      if (model.fetchImagesStatus is FetchResult.Fail) {
+        ui.hideProgress()
+        ui.showError(model.fetchImagesStatus.error)
+      }
     } else {
       val gridImages = model.images.map(::ImageGridItem)
       val gridItems = when (model.fetchMoreImagesStatus) {

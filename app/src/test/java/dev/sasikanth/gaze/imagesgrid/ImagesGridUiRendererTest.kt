@@ -97,4 +97,20 @@ class ImagesGridUiRendererTest {
     verify(ui).showImages(expectedGridItems)
     verifyNoMoreInteractions(ui)
   }
+
+  @Test
+  fun `when fetch images error fails and there are no images in model, then show error`() {
+    // given
+    val model = ImagesGridModel.create(numberOfImagesToLoad = 15)
+      .fetchImagesFail("Failed to fetch images")
+
+    // when
+    uiRenderer.render(model)
+
+    // then
+    verify(ui).showProgress()
+    verify(ui).hideProgress()
+    verify(ui).showError("Failed to fetch images")
+    verifyNoMoreInteractions(ui)
+  }
 }

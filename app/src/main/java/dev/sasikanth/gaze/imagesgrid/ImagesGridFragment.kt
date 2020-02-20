@@ -103,5 +103,15 @@ class ImagesGridFragment : Fragment(R.layout.fragment_images_grid), ImagesGridUi
 
   override fun showImages(gridItems: List<GridItem>) {
     gridAdapter.submitList(gridItems)
+    imagesGrid.isVisible = true
+    imagesGridErrorTextView.isVisible = false
+    imagesGridRetryButton.isVisible = false
+  }
+
+  override fun showError(error: String) {
+    imagesGrid.isVisible = false
+    imagesGridErrorTextView.isVisible = true
+    imagesGridErrorTextView.text = error
+    imagesGridRetryButton.isVisible = true
   }
 }
