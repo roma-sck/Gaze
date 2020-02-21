@@ -48,7 +48,7 @@ class ImagesGridUpdateTest {
       .whenEvent(ImagesLoaded(images))
       .then(
         assertThatNext(
-          hasNoModel(),
+          hasModel(defaultModel.fetchingImages()),
           hasEffects(FetchImages(expectedStartDate, expectedEndDate) as ImagesGridEffect)
         )
       )
@@ -196,6 +196,24 @@ class ImagesGridUpdateTest {
         assertThatNext(
           hasModel(modelWithImages.fetchingMoreImages()),
           hasEffects(FetchMoreImages(expectedStartDate, expectedEndDate) as ImagesGridEffect)
+        )
+      )
+  }
+
+  @Test
+  fun `when retry fetch image button is clicked, then retry fetch images`() {
+    val expectedStartDate = LocalDate.parse("2020-01-01")
+    val expectedEndDate = LocalDate.parse("2020-01-16")
+
+    testClock.setDate(LocalDate.parse("2020-01-16"))
+
+    updateSpec
+      .given(defaultModel)
+      .whenEvent(RetryFetchImagesClicked)
+      .then(
+        assertThatNext(
+          hasModel(defaultModel.fetchingImages()),
+          hasEffects(FetchImages(expectedStartDate, expectedEndDate) as ImagesGridEffect)
         )
       )
   }

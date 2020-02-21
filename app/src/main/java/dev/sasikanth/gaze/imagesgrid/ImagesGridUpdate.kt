@@ -38,6 +38,9 @@ class ImagesGridUpdate(private val clock: Clock) : Update<ImagesGridModel, Image
       is RetryFetchMoreImageClicked -> {
         fetchMoreImages(model)
       }
+      is RetryFetchImagesClicked -> {
+        fetchImagesWhenEmpty(model)
+      }
     }
   }
 
@@ -71,6 +74,6 @@ class ImagesGridUpdate(private val clock: Clock) : Update<ImagesGridModel, Image
   private fun fetchImagesWhenEmpty(model: ImagesGridModel): Next<ImagesGridModel, ImagesGridEffect> {
     val endDate = LocalDate.now(clock)
     val startDate = endDate.minusDays(model.numberOfImagesToLoad.toLong())
-    return dispatch(FetchImages(startDate, endDate))
+    return next(model.fetchingImages(), FetchImages(startDate, endDate))
   }
 }

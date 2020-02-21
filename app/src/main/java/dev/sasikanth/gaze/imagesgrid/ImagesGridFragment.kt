@@ -84,6 +84,10 @@ class ImagesGridFragment : Fragment(R.layout.fragment_images_grid), ImagesGridUi
     }
 
     gridAdapter.registerAdapterDataObserver(adapterDataObserver)
+
+    imagesGridRetryButton.setOnClickListener {
+      viewModel.dispatchEvent(RetryFetchImagesClicked)
+    }
   }
 
   override fun onDestroyView() {

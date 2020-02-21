@@ -20,6 +20,9 @@ data class ImagesGridModel(
   fun imagesLoaded(images: List<GazeImage>): ImagesGridModel =
     copy(images = images)
 
+  fun fetchingImages(): ImagesGridModel =
+    copy(fetchImagesStatus = Loading)
+
   fun fetchImagesSuccess(): ImagesGridModel =
     copy(fetchImagesStatus = Success)
 
