@@ -118,4 +118,10 @@ class ImagesGridFragment : Fragment(R.layout.fragment_images_grid), ImagesGridUi
     imagesGridErrorTextView.text = error
     imagesGridRetryButton.isVisible = true
   }
+
+  override fun hideError() {
+    imagesGrid.isVisible = true
+    imagesGridErrorTextView.isVisible = false
+    imagesGridRetryButton.isVisible = false
+  }
 }

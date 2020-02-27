@@ -5,4 +5,5 @@ interface ImagesGridUi {
   fun hideProgress()
   fun showImages(gridItems: List<GridItem>)
   fun showError(error: String)
+  fun hideError()
 }

@@ -8,11 +8,15 @@ class ImagesGridUiRenderer(
 
   fun render(model: ImagesGridModel) {
     if (model.images.isNullOrEmpty()) {
-      ui.showProgress()
-
-      if (model.fetchImagesStatus is FetchResult.Fail) {
-        ui.hideProgress()
-        ui.showError(model.fetchImagesStatus.error)
+      when (val fetchStatus = model.fetchImagesStatus) {
+        is FetchResult.Loading -> {
+          ui.showProgress()
+          ui.hideError()
+        }
+        is FetchResult.Fail -> {
+          ui.hideProgress()
+          ui.showError(fetchStatus.error)
+        }
       }
     } else {
       val gridImages = model.images.map(::ImageGridItem)
@@ -29,6 +33,7 @@ class ImagesGridUiRenderer(
       }
 
       ui.hideProgress()
+      ui.hideError()
       ui.showImages(gridItems)
     }
   }

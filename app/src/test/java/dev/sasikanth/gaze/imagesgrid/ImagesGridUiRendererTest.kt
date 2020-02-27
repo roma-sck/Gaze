@@ -12,34 +12,23 @@ class ImagesGridUiRendererTest {
   private val uiRenderer = ImagesGridUiRenderer(ui)
 
   @Test
-  fun `when images is null then show progress`() {
-    // given
-    val model = ImagesGridModel.create(numberOfImagesToLoad = 15)
-
-    // when
-    uiRenderer.render(model)
-
-    // then
-    verify(ui).showProgress()
-    verifyNoMoreInteractions(ui)
-  }
-
-  @Test
-  fun `when images are empty then show progress`() {
+  fun `when there are no images and fetch images status is loading then show progress`() {
     // given
     val model = ImagesGridModel.create(numberOfImagesToLoad = 15)
       .imagesLoaded(emptyList())
+      .fetchingImages()
 
     // when
     uiRenderer.render(model)
 
     // then
     verify(ui).showProgress()
+    verify(ui).hideError()
     verifyNoMoreInteractions(ui)
   }
 
   @Test
-  fun `when images are loaded then hide progress and show images`() {
+  fun `when images are loaded then hide progress and error message and show images`() {
     // given
     val image = ImageMocker.image(LocalDate.parse("2018-01-01"))
     val images = listOf(image)
@@ -53,6 +42,7 @@ class ImagesGridUiRendererTest {
 
     // then
     verify(ui).hideProgress()
+    verify(ui).hideError()
     verify(ui).showImages(gridItems)
     verifyNoMoreInteractions(ui)
   }
@@ -74,6 +64,7 @@ class ImagesGridUiRendererTest {
 
     // then
     verify(ui).hideProgress()
+    verify(ui).hideError()
     verify(ui).showImages(expectedGridItems)
     verifyNoMoreInteractions(ui)
   }
@@ -94,6 +85,7 @@ class ImagesGridUiRendererTest {
 
     // then
     verify(ui).hideProgress()
+    verify(ui).hideError()
     verify(ui).showImages(expectedGridItems)
     verifyNoMoreInteractions(ui)
   }
@@ -108,7 +100,6 @@ class ImagesGridUiRendererTest {
     uiRenderer.render(model)
 
     // then
-    verify(ui).showProgress()
     verify(ui).hideProgress()
     verify(ui).showError("Failed to fetch images")
     verifyNoMoreInteractions(ui)
