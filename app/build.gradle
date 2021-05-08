@@ -9,7 +9,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
 def localProperties = new Properties()
-localProperties.load(new FileInputStream(rootProject.file("local.properties")))
+localProperties.load(new FileInputStream(file("../local.properties")))
 
 android {
     compileSdkVersion 30
