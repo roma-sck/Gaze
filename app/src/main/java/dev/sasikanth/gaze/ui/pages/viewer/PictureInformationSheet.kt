@@ -1,6 +1,7 @@
 package dev.sasikanth.gaze.ui.pages.viewer
 
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,8 +12,14 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dev.sasikanth.gaze.databinding.PictureInformationSheetBinding
+import dev.sasikanth.gaze.di.misc.injector
+import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
 class PictureInformationSheet : BottomSheetDialogFragment() {
+
+    @Inject
+    lateinit var dateFormatter: DateTimeFormatter
 
     private val args: PictureInformationSheetArgs by navArgs()
 
@@ -27,12 +34,19 @@ class PictureInformationSheet : BottomSheetDialogFragment() {
         return dialog
     }
 
+    override fun onAttach(context: Context) {
+        requireActivity().injector.inject(this)
+        super.onAttach(context)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = PictureInformationSheetBinding.inflate(inflater)
+        val binding = PictureInformationSheetBinding.inflate(inflater).apply {
+            dateFormatter = this@PictureInformationSheet.dateFormatter
+        }
         binding.aPod = args.aPod
 
         binding.closePictureInformation.setOnClickListener {

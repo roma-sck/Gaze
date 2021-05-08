@@ -21,6 +21,8 @@ import dev.sasikanth.gaze.services.PictureDownloadService
 import dev.sasikanth.gaze.ui.MainViewModel
 import dev.sasikanth.gaze.ui.adapters.ViewerAdapter
 import dev.sasikanth.gaze.utils.ZoomOutPageTransformer
+import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
 // This can be moved into ViewModel as an single event live data
 interface PictureInformationListener {
@@ -34,6 +36,9 @@ class ViewerFragment : Fragment(), PictureInformationListener {
         private const val STORAGE_PERMISSION_REQUEST_CODE = 1001
         private val PERMISSIONS = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }
+
+    @Inject
+    lateinit var dateFormatter: DateTimeFormatter
 
     private val viewModel: MainViewModel by savedStateActivityViewModels { savedStateHandle ->
         injector.mainViewModel.create(savedStateHandle)
@@ -67,6 +72,7 @@ class ViewerFragment : Fragment(), PictureInformationListener {
         binding = FragmentViewerBinding.inflate(inflater).apply {
             pictureInformationListener = this@ViewerFragment
             lifecycleOwner = this@ViewerFragment
+            dateFormatter = this@ViewerFragment.dateFormatter
         }
 
         val viewerAdapter = ViewerAdapter()

@@ -8,6 +8,10 @@
         <variable
             name="aPod"
             type="dev.sasikanth.gaze.data.APod" />
+
+        <variable
+            name="dateFormatter"
+            type="java.time.format.DateTimeFormatter" />
     </data>
 
     <androidx.core.widget.NestedScrollView
@@ -73,6 +77,7 @@
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                     android:textColor="@android:color/black"
                     app:aPodFormattedDate="@{aPod.date}"
+                    app:dateFormatter="@{dateFormatter}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@id/picture_title"

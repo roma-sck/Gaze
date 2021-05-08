@@ -17,6 +17,7 @@ import dev.sasikanth.gaze.data.APod
 import dev.sasikanth.gaze.data.NetworkState
 import dev.sasikanth.gaze.utils.extensions.dpToPx
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Date
 
 @BindingAdapter("isVisibleOn")
@@ -24,10 +25,10 @@ fun View.isVisibleOn(isVisible: Boolean) {
     this.isVisible = isVisible
 }
 
-@BindingAdapter("aPodFormattedDate")
-fun AppCompatTextView.setFormattedDate(date: LocalDate?) {
+@BindingAdapter("aPodFormattedDate", "dateFormatter")
+fun AppCompatTextView.setFormattedDate(date: LocalDate?, dateFormatter: DateTimeFormatter) {
     date?.let {
-        text = DateUtils.formatToAppDate(it)
+        text = dateFormatter.format(it)
     }
 }
 

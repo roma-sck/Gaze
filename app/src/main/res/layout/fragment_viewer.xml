@@ -12,6 +12,10 @@
         <variable
             name="pictureInformationListener"
             type="dev.sasikanth.gaze.ui.pages.viewer.PictureInformationListener" />
+
+        <variable
+            name="dateFormatter"
+            type="java.time.format.DateTimeFormatter" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -106,6 +110,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                 app:aPodFormattedDate="@{aPod.date}"
+                app:dateFormatter="@{dateFormatter}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/picture_title"
