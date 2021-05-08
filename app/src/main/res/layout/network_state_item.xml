@@ -7,7 +7,7 @@
 
         <variable
             name="networkState"
-            type="dev.sasikanth.nasa.apod.data.NetworkState" />
+            type="dev.sasikanth.gaze.data.NetworkState" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

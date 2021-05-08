@@ -7,7 +7,7 @@
 
         <variable
             name="aPod"
-            type="dev.sasikanth.nasa.apod.data.APod" />
+            type="dev.sasikanth.gaze.data.APod" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -7,17 +7,17 @@
 
         <variable
             name="aPod"
-            type="dev.sasikanth.nasa.apod.data.APod" />
+            type="dev.sasikanth.gaze.data.APod" />
 
         <variable
             name="pictureInformationListener"
-            type="dev.sasikanth.nasa.apod.ui.pages.viewer.PictureInformationListener" />
+            type="dev.sasikanth.gaze.ui.pages.viewer.PictureInformationListener" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.pages.viewer.ViewerFragment">
+        tools:context="dev.sasikanth.gaze.ui.pages.viewer.ViewerFragment">
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/apods_viewer"

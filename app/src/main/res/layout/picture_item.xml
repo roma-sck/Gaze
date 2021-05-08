@@ -7,7 +7,7 @@
 
         <variable
             name="aPod"
-            type="dev.sasikanth.nasa.apod.data.APod" />
+            type="dev.sasikanth.gaze.data.APod" />
 
         <variable
             name="position"
@@ -15,7 +15,7 @@
 
         <variable
             name="aPodItemListener"
-            type="dev.sasikanth.nasa.apod.ui.adapters.APodItemListener" />
+            type="dev.sasikanth.gaze.ui.adapters.APodItemListener" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

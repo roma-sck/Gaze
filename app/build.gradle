@@ -15,7 +15,7 @@ android {
     compileSdkVersion 30
 
     defaultConfig {
-        applicationId "dev.sasikanth.nasa.apod"
+        applicationId "dev.sasikanth.gaze"
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 2
