@@ -5,6 +5,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import org.apache.commons.lang3.time.DateUtils as ApacheDateUtils
 
 object DateUtils {
     val americanTimeZone: TimeZone = TimeZone.getTimeZone("America/Los_Angeles")
@@ -21,7 +22,5 @@ object DateUtils {
 }
 
 fun Calendar.isAfter(`when`: Calendar): Boolean {
-    return this.get(Calendar.DAY_OF_MONTH) > `when`.get(Calendar.DAY_OF_MONTH) &&
-            this.get(Calendar.MONTH) >= `when`.get(Calendar.MONTH) &&
-            this.get(Calendar.YEAR) >= `when`.get(Calendar.YEAR)
+    return ApacheDateUtils.truncatedCompareTo(this, `when`, Calendar.DATE) > 0
 }
