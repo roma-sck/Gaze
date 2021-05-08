@@ -7,15 +7,15 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.os.IBinder
 import android.provider.MediaStore
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.graphics.drawable.toBitmap
 import coil.Coil
-import coil.api.get
+import coil.request.ImageRequest
 import dev.sasikanth.nasa.apod.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -76,7 +76,10 @@ class PictureDownloadService :
         try {
             // If hd image is already loaded by Coil, it will instantly get the image
             // from disk cache which can be saved to file.
-            val drawable: BitmapDrawable = Coil.get(downloadUrl) as BitmapDrawable
+            val imageRequest = ImageRequest.Builder(applicationContext)
+                    .data(downloadUrl)
+                    .build()
+            val bitmap = Coil.execute(imageRequest).drawable?.toBitmap()
             val timeStamp = Calendar.getInstance().timeInMillis
             val title = pictureName?.replace(" ", "_")?.toLowerCase() ?: "GAZE_$timeStamp"
 
@@ -95,7 +98,7 @@ class PictureDownloadService :
             )
             if (insertUri != null) {
                 contentResolver.openOutputStream(insertUri)?.use {
-                    drawable.bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
+                    bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, it)
                 }
 
                 val builder = NotificationCompat.Builder(applicationContext, CHANNEL_ID)

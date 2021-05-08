@@ -10,7 +10,7 @@ import dev.sasikanth.nasa.apod.ui.pages.viewer.ViewerFragment
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [DataModule::class, ViewModelModule::class])
+@Component(modules = [DataModule::class])
 interface AppComponent {
 
     @Component.Factory

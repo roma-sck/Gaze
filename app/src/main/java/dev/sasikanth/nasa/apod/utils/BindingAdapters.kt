@@ -10,7 +10,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.BindingAdapter
-import coil.api.load
+import coil.load
 import com.google.android.material.card.MaterialCardView
 import dev.sasikanth.nasa.apod.R
 import dev.sasikanth.nasa.apod.data.APod

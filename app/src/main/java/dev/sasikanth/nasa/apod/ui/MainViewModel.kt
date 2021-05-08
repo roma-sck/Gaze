@@ -5,8 +5,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dev.sasikanth.nasa.apod.data.APod
 import dev.sasikanth.nasa.apod.data.source.APodRepository
 import kotlinx.coroutines.launch
@@ -20,7 +21,7 @@ class MainViewModel @AssistedInject constructor(
         private const val KEY_CURRENT_PICTURE_POSITION = "dev.sasikanth.nasa.apod.current_position"
     }
 
-    @AssistedInject.Factory
+    @AssistedFactory
     interface Factory {
         fun create(handle: SavedStateHandle): MainViewModel
     }
