@@ -1,5 +1,7 @@
 # Gaze - Astronomy Picture of the Day
 
+[![Android CI](https://github.com/msasikanth/Gaze/actions/workflows/android.yml/badge.svg?branch=main)](https://github.com/msasikanth/Gaze/actions/workflows/android.yml)
+
 Android app to display astronomy picture of the day provided by NASA 
 open API (https://api.nasa.gov/api.html#apod)
 
