@@ -7,12 +7,11 @@ import dev.sasikanth.gaze.BuildConfig
 import dev.sasikanth.gaze.data.APod
 import dev.sasikanth.gaze.data.source.local.APodDao
 import dev.sasikanth.gaze.data.source.remote.APodApiService
-import dev.sasikanth.gaze.utils.DateUtils
-import dev.sasikanth.gaze.utils.isAfter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.util.Calendar
+import java.time.LocalDate
+import java.time.ZoneId
 import javax.inject.Inject
 
 class APodRepository
@@ -28,37 +27,22 @@ class APodRepository
     val networkState = aPodBoundaryCallback.networkState
 
     suspend fun getLatestAPod() {
-        // I could probably move this in onItemAtFrontLoaded of BoundaryCallback.
-        // But I wanted to avoid checking every time top the page is reached.
-        // This method is only called and checked every time MainViewModel is created,
-        // so essentially when app is first opened.
-        val currentCal = Calendar.getInstance(DateUtils.americanTimeZone)
+        val now = LocalDate.now(ZoneId.of("America/Los_Angeles"))
         val lastLatestAPod = localSource.getLatestAPodDate()
 
-        if (lastLatestAPod != null) {
-            val lastLatestAPodCal = Calendar.getInstance().apply {
-                time = lastLatestAPod
-            }
-
-            // Request latest picture only if current date is greater than
-            // last saved date.
-            if (currentCal.isAfter(lastLatestAPodCal)) {
-                // Load latest APod from API
-                val currentDate = DateUtils.formatDate(currentCal.time)
-                try {
-                    val aPodResponse = withContext(Dispatchers.IO) {
-                        remoteSource.getAPod(BuildConfig.API_KEY, currentDate)
-                    }
-                    if (aPodResponse.isSuccessful) {
-                        val latestApod = aPodResponse.body()
-                        // Ignoring null since db is our source of truth, data won't change
-                        if (latestApod != null) {
-                            localSource.insertAPod(latestApod)
-                        }
-                    }
-                } catch (e: Exception) {
-                    Timber.e(e.localizedMessage)
+        if (lastLatestAPod != null && now.isAfter(lastLatestAPod)) {
+            try {
+                val aPodResponse = withContext(Dispatchers.IO) {
+                    remoteSource.getAPod(BuildConfig.API_KEY, now.toString())
                 }
+                if (aPodResponse.isSuccessful) {
+                    val latestApod = aPodResponse.body()
+                    if (latestApod != null) {
+                        localSource.insertAPod(latestApod)
+                    }
+                }
+            } catch (e: Exception) {
+                Timber.e(e.localizedMessage)
             }
         }
     }

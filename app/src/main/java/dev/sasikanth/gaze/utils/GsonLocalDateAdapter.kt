@@ -6,17 +6,17 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonParseException
 import java.lang.reflect.Type
 import java.text.ParseException
-import java.util.Date
+import java.time.LocalDate
 
-class GsonDateAdapter : JsonDeserializer<Date> {
+class GsonLocalDateAdapter : JsonDeserializer<LocalDate> {
 
     override fun deserialize(
         json: JsonElement?,
         typeOfT: Type?,
         context: JsonDeserializationContext?
-    ): Date {
+    ): LocalDate {
         try {
-            return DateUtils.parseDate(json!!.asString)
+            return LocalDate.parse(json!!.asString)
         } catch (e: ParseException) {
             throw JsonParseException(e)
         }

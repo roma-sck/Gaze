@@ -7,7 +7,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
-import java.util.Date
+import java.time.LocalDate
 
 @Keep
 @Parcelize
@@ -15,7 +15,7 @@ import java.util.Date
 data class APod(
     @PrimaryKey
     @ColumnInfo(name = "date")
-    val date: Date,
+    val date: LocalDate,
     @ColumnInfo(name = "title")
     val title: String,
     @ColumnInfo(name = "explanation")

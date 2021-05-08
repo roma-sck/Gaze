@@ -7,13 +7,13 @@ import dagger.Module
 import dagger.Provides
 import dev.sasikanth.gaze.data.source.local.APodDatabase
 import dev.sasikanth.gaze.data.source.remote.APodApiService
-import dev.sasikanth.gaze.utils.GsonDateAdapter
+import dev.sasikanth.gaze.utils.GsonLocalDateAdapter
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
-import java.util.Date
+import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -23,11 +23,14 @@ object DataModule {
     @JvmStatic
     @Singleton
     @Provides
-    fun providesAPodDatabase(context: Context): APodDatabase = Room.databaseBuilder(
-        context,
-        APodDatabase::class.java,
-        "apod.db"
-    ).build()
+    fun providesAPodDatabase(context: Context): APodDatabase = Room
+        .databaseBuilder(
+            context,
+            APodDatabase::class.java,
+            "apod.db"
+        )
+        .fallbackToDestructiveMigration()
+        .build()
 
     @JvmStatic
     @Singleton
@@ -52,7 +55,7 @@ object DataModule {
 
         // Creating Gson instance with GsonDateAdapter type adapter
         val gson = GsonBuilder()
-            .registerTypeAdapter(Date::class.java, GsonDateAdapter())
+            .registerTypeAdapter(LocalDate::class.java, GsonLocalDateAdapter())
             .create()
 
         return Retrofit.Builder()

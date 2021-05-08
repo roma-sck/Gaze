@@ -7,14 +7,13 @@ import dev.sasikanth.gaze.data.APod
 import dev.sasikanth.gaze.data.NetworkState
 import dev.sasikanth.gaze.data.source.local.APodDao
 import dev.sasikanth.gaze.data.source.remote.APodApiService
-import dev.sasikanth.gaze.utils.DateUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.Calendar
-import java.util.Date
+import java.time.LocalDate
+import java.time.Month
 
 class APodBoundaryCallback(
     private val localSource: APodDao,
@@ -27,87 +26,91 @@ class APodBoundaryCallback(
 
     private var isLoading = false
 
-    // No items are present, load data from API
+    // Limiting data to 16 Jun 1995, since API only has data from that date onwards
+    private val limitDate = LocalDate.of(1995, Month.JUNE, 16)
+
     override fun onZeroItemsLoaded() {
         super.onZeroItemsLoaded()
-        getAndSaveAPodRange(null)
+        loadInitialPods()
     }
 
-    // Once we reach end of database, request new data from API
     override fun onItemAtEndLoaded(itemAtEnd: APod) {
         super.onItemAtEndLoaded(itemAtEnd)
-        getAndSaveAPodRange(itemAtEnd.date)
+        loadPodsUntil(itemAtEnd.date)
     }
 
-    private fun getAndSaveAPodRange(date: Date?) {
+    private fun loadPodsUntil(endDate: LocalDate) {
         if (isLoading) return
+
         uiScope.launch {
             isLoading = true
-            // Getting calendar instance for current date
-            val calendar = Calendar.getInstance()
 
-            // Limiting data to 16 Jun 1995, since API only has data after that
-            val limitCal = Calendar.getInstance().apply {
-                set(Calendar.DAY_OF_MONTH, 16)
-                set(Calendar.MONTH, Calendar.JUNE)
-                set(Calendar.YEAR, 1995)
-            }
+            val startDate = endDate.minusDays(20)
 
-            // If last date is passed, we are setting it as current date
-            // and getting day before date.
-            if (date != null) {
-                calendar.time = date
-                calendar.add(Calendar.DAY_OF_MONTH, -1)
-            }
+            loadAndSavePods(startDate, endDate)
 
-            // Getting 20 days worth of images at a time
-            val endDate = DateUtils.formatDate(calendar.time)
-            calendar.add(Calendar.DAY_OF_MONTH, -20)
-            if (calendar >= limitCal) {
-                networkState.postValue(NetworkState.Loading)
-                val startDate = DateUtils.formatDate(calendar.time)
-                try {
-                    // Getting images and filtering them so that only image type are saved into db
-                    val picturesResponse = withContext(Dispatchers.IO) {
-                        // Just to be safe making the suspended retrofit call into separate dispatcher
-                        // room will automatically use io executor from android architecture components
-                        // so no need for moving it manually into separate dispatcher;
-                        remoteSource.getAPods(
-                            BuildConfig.API_KEY,
-                            startDate,
-                            endDate
-                        )
-                    }
-                    if (picturesResponse.isSuccessful) {
-                        localSource.insertAPod(
-                            *picturesResponse.body().orEmpty().toTypedArray()
-                        )
-                        networkState.postValue(NetworkState.Success)
-                    } else {
-                        when (picturesResponse.code()) {
-                            400 -> {
-                                networkState.postValue(NetworkState.BadRequestError)
-                            }
-                            404 -> {
-                                networkState.postValue(NetworkState.NotFoundError)
-                            }
-                            500 -> {
-                                networkState.postValue(NetworkState.ServerError)
-                            }
-                            else -> {
-                                networkState.postValue(
-                                    NetworkState.UnknownError(picturesResponse.code())
-                                )
-                            }
+            isLoading = false
+        }
+    }
+
+    private fun loadInitialPods() {
+        if (isLoading) return
+
+        uiScope.launch {
+            isLoading = true
+
+            val endDate = LocalDate.now()
+            val startDate = endDate.minusDays(20)
+
+            loadAndSavePods(startDate, endDate)
+
+            isLoading = false
+        }
+    }
+
+    private suspend fun loadAndSavePods(
+        startDate: LocalDate,
+        endDate: LocalDate
+    ) {
+        if (startDate >= limitDate) {
+            networkState.postValue(NetworkState.Loading)
+            try {
+                // Getting images and filtering them so that only image type are saved into db
+                val picturesResponse = withContext(Dispatchers.IO) {
+                    remoteSource.getAPods(
+                        BuildConfig.API_KEY,
+                        startDate.toString(),
+                        endDate.toString()
+                    )
+                }
+                if (picturesResponse.isSuccessful) {
+                    localSource.insertAPod(
+                        *picturesResponse.body().orEmpty().toTypedArray()
+                    )
+                    networkState.postValue(NetworkState.Success)
+                } else {
+                    when (picturesResponse.code()) {
+                        400 -> {
+                            networkState.postValue(NetworkState.BadRequestError)
+                        }
+                        404 -> {
+                            networkState.postValue(NetworkState.NotFoundError)
+                        }
+                        500 -> {
+                            networkState.postValue(NetworkState.ServerError)
+                        }
+                        else -> {
+                            networkState.postValue(
+                                NetworkState.UnknownError(picturesResponse.code())
+                            )
                         }
                     }
-                } catch (e: Exception) {
-                    networkState.postValue(NetworkState.Exception(e.localizedMessage))
                 }
-            } else {
-                networkState.postValue(NetworkState.Success)
+            } catch (e: Exception) {
+                networkState.postValue(NetworkState.Exception(e.localizedMessage))
             }
-            isLoading = false
+        } else {
+            networkState.postValue(NetworkState.Success)
         }
     }
 }

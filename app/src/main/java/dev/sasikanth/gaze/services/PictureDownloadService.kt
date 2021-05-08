@@ -22,7 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.Calendar
+import java.time.Instant
 import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
 
@@ -77,10 +77,10 @@ class PictureDownloadService :
             // If hd image is already loaded by Coil, it will instantly get the image
             // from disk cache which can be saved to file.
             val imageRequest = ImageRequest.Builder(applicationContext)
-                    .data(downloadUrl)
-                    .build()
+                .data(downloadUrl)
+                .build()
             val bitmap = Coil.execute(imageRequest).drawable?.toBitmap()
-            val timeStamp = Calendar.getInstance().timeInMillis
+            val timeStamp = Instant.now().toEpochMilli()
             val title = pictureName?.replace(" ", "_")?.toLowerCase() ?: "GAZE_$timeStamp"
 
             // Since Environment.getExternalStoragePublicDirectory() is deprecated with Q

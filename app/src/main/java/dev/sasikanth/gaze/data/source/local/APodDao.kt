@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import dev.sasikanth.gaze.data.APod
+import java.time.LocalDate
 import java.util.Date
 
 @Dao
@@ -15,11 +16,11 @@ interface APodDao {
     suspend fun insertAPod(vararg apod: APod)
 
     @Query("SELECT * FROM apods WHERE date = :date ORDER BY date DESC LIMIT 1")
-    suspend fun getAPod(date: Date): APod?
+    suspend fun getAPod(date: LocalDate): APod?
 
     @Query("SELECT * FROM apods WHERE media_type == 'image' ORDER BY date DESC")
     fun getAPods(): DataSource.Factory<Int, APod>
 
     @Query("SELECT date FROM apods ORDER BY date DESC LIMIT 1")
-    suspend fun getLatestAPodDate(): Date?
+    suspend fun getLatestAPodDate(): LocalDate?
 }
