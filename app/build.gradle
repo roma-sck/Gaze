@@ -8,8 +8,12 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
-def localProperties = new Properties()
-localProperties.load(new FileInputStream(file("../local.properties")))
+final localProperties = new Properties()
+final localPropertiesFile = rootProject.file('local.properties')
+final hasLocalProperties = localPropertiesFile.exists()
+if (hasLocalProperties) {
+    localProperties.load(new FileInputStream(localPropertiesFile))
+}
 
 android {
     compileSdkVersion 30
