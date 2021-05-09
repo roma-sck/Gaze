@@ -1,10 +1,12 @@
 package dev.sasikanth.gaze.di.app
 
-import android.content.Context
+import android.app.Application
 import androidx.room.Room
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import dev.sasikanth.gaze.data.source.local.APodDatabase
 import dev.sasikanth.gaze.data.source.remote.APodApiService
 import dev.sasikanth.gaze.utils.GsonLocalDateAdapter
@@ -18,26 +20,24 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
+@InstallIn(SingletonComponent::class)
 object DataModule {
 
-    @JvmStatic
     @Singleton
     @Provides
-    fun providesAPodDatabase(context: Context): APodDatabase = Room
+    fun providesAPodDatabase(application: Application): APodDatabase = Room
         .databaseBuilder(
-            context,
+            application,
             APodDatabase::class.java,
             "apod.db"
         )
         .fallbackToDestructiveMigration()
         .build()
 
-    @JvmStatic
     @Singleton
     @Provides
     fun providesAPodDao(database: APodDatabase) = database.aPodDao
 
-    @JvmStatic
     @Singleton
     @Provides
     fun providesRetrofit(): Retrofit {
@@ -65,7 +65,6 @@ object DataModule {
             .build()
     }
 
-    @JvmStatic
     @Singleton
     @Provides
     fun providesAPodApiService(retrofit: Retrofit): APodApiService = retrofit.create()

@@ -7,6 +7,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
+apply plugin: 'dagger.hilt.android.plugin'
 
 final localProperties = new Properties()
 final localPropertiesFile = rootProject.file('local.properties')
@@ -52,6 +53,10 @@ androidExtensions {
     experimental = true
 }
 
+kapt {
+    correctErrorTypes true
+}
+
 spotless {
     kotlin {
         target("**/*.kt")
@@ -92,8 +97,8 @@ dependencies {
 
     implementation "io.coil-kt:coil:1.2.1"
 
-    implementation "com.google.dagger:dagger:$dagger_version"
-    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    implementation "com.google.dagger:hilt-android:$dagger_version"
+    kapt "com.google.dagger:hilt-compiler:$dagger_version"
 
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
     implementation 'com.jakewharton.timber:timber:4.7.1'

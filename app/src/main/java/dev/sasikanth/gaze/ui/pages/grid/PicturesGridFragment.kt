@@ -1,28 +1,27 @@
 package dev.sasikanth.gaze.ui.pages.grid
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dagger.hilt.android.AndroidEntryPoint
 import dev.sasikanth.gaze.databinding.FragmentPicturesGridBinding
-import dev.sasikanth.gaze.di.misc.injector
-import dev.sasikanth.gaze.di.misc.savedStateActivityViewModels
 import dev.sasikanth.gaze.ui.MainViewModel
 import dev.sasikanth.gaze.ui.adapters.APodItemListener
 import dev.sasikanth.gaze.ui.adapters.APodsGridAdapter
 
+@AndroidEntryPoint
 class PicturesGridFragment : Fragment() {
 
-    val viewModel: MainViewModel by savedStateActivityViewModels { savedStateHandle ->
-        injector.mainViewModel.create(savedStateHandle)
-    }
+    val viewModel: MainViewModel by activityViewModels()
+
     private val gridScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
@@ -34,16 +33,11 @@ class PicturesGridFragment : Fragment() {
     private lateinit var binding: FragmentPicturesGridBinding
     private lateinit var gridLayoutManager: GridLayoutManager
 
-    override fun onAttach(context: Context) {
-        requireActivity().injector.inject(this)
-        super.onAttach(context)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentPicturesGridBinding.inflate(inflater)
 
         val adapter = APodsGridAdapter(APodItemListener { position ->

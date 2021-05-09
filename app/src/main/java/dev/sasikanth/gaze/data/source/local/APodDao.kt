@@ -7,7 +7,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import dev.sasikanth.gaze.data.APod
 import java.time.LocalDate
-import java.util.Date
 
 @Dao
 interface APodDao {

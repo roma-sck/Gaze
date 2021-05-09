@@ -18,7 +18,6 @@ import dev.sasikanth.gaze.data.NetworkState
 import dev.sasikanth.gaze.utils.extensions.dpToPx
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Date
 
 @BindingAdapter("isVisibleOn")
 fun View.isVisibleOn(isVisible: Boolean) {

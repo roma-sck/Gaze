@@ -1,7 +1,6 @@
 package dev.sasikanth.gaze.ui.pages.viewer
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,13 +9,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
+import dagger.hilt.android.AndroidEntryPoint
 import dev.sasikanth.gaze.data.APod
 import dev.sasikanth.gaze.databinding.FragmentViewerBinding
-import dev.sasikanth.gaze.di.misc.injector
-import dev.sasikanth.gaze.di.misc.savedStateActivityViewModels
 import dev.sasikanth.gaze.services.PictureDownloadService
 import dev.sasikanth.gaze.ui.MainViewModel
 import dev.sasikanth.gaze.ui.adapters.ViewerAdapter
@@ -30,6 +29,7 @@ interface PictureInformationListener {
     fun downloadImage(pictureName: String, downloadUrl: String?)
 }
 
+@AndroidEntryPoint
 class ViewerFragment : Fragment(), PictureInformationListener {
 
     companion object {
@@ -40,9 +40,8 @@ class ViewerFragment : Fragment(), PictureInformationListener {
     @Inject
     lateinit var dateFormatter: DateTimeFormatter
 
-    private val viewModel: MainViewModel by savedStateActivityViewModels { savedStateHandle ->
-        injector.mainViewModel.create(savedStateHandle)
-    }
+    private val viewModel: MainViewModel by activityViewModels()
+
     private val pagerListener = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             super.onPageSelected(position)
@@ -59,16 +58,11 @@ class ViewerFragment : Fragment(), PictureInformationListener {
 
     private lateinit var binding: FragmentViewerBinding
 
-    override fun onAttach(context: Context) {
-        requireActivity().injector.inject(this)
-        super.onAttach(context)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentViewerBinding.inflate(inflater).apply {
             pictureInformationListener = this@ViewerFragment
             lifecycleOwner = this@ViewerFragment

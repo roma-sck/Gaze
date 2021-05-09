@@ -23,6 +23,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.Instant
+import java.util.Locale
 import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
 
@@ -81,7 +82,7 @@ class PictureDownloadService :
                 .build()
             val bitmap = Coil.execute(imageRequest).drawable?.toBitmap()
             val timeStamp = Instant.now().toEpochMilli()
-            val title = pictureName?.replace(" ", "_")?.toLowerCase() ?: "GAZE_$timeStamp"
+            val title = pictureName?.replace(" ", "_")?.lowercase(Locale.getDefault()) ?: "GAZE_$timeStamp"
 
             // Since Environment.getExternalStoragePublicDirectory() is deprecated with Q
             // decided to go for saving with MediaStore

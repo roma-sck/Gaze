@@ -5,25 +5,20 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.sasikanth.gaze.data.APod
 import dev.sasikanth.gaze.data.source.APodRepository
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MainViewModel @AssistedInject constructor(
+@HiltViewModel
+class MainViewModel @Inject constructor(
     private val aPodRepository: APodRepository,
-    @Assisted private val handle: SavedStateHandle
+    private val handle: SavedStateHandle
 ) : ViewModel() {
 
     companion object {
         private const val KEY_CURRENT_PICTURE_POSITION = "dev.sasikanth.gaze.current_position"
-    }
-
-    @AssistedFactory
-    interface Factory {
-        fun create(handle: SavedStateHandle): MainViewModel
     }
 
     val networkState = aPodRepository.networkState
