@@ -29,6 +29,8 @@ class APodsGridAdapter(
         const val APOD_ITEM = 1
     }
 
+    fun isLoadingItem(position: Int) = getItemViewType(position) == LOADING_ITEM
+
     private var networkState: NetworkState? = null
 
     private fun hasExtraRow() = networkState != null && networkState !is NetworkState.Success
