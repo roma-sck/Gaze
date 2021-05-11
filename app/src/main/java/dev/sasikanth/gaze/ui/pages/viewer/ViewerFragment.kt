@@ -1,19 +1,22 @@
 package dev.sasikanth.gaze.ui.pages.viewer
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import dagger.hilt.android.AndroidEntryPoint
+import dev.sasikanth.gaze.R
 import dev.sasikanth.gaze.data.APod
 import dev.sasikanth.gaze.databinding.FragmentViewerBinding
 import dev.sasikanth.gaze.services.PictureDownloadService
@@ -31,11 +34,6 @@ interface PictureInformationListener {
 
 @AndroidEntryPoint
 class ViewerFragment : Fragment(), PictureInformationListener {
-
-    companion object {
-        private const val STORAGE_PERMISSION_REQUEST_CODE = 1001
-        private val PERMISSIONS = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    }
 
     @Inject
     lateinit var dateFormatter: DateTimeFormatter
@@ -57,6 +55,23 @@ class ViewerFragment : Fragment(), PictureInformationListener {
     }
 
     private lateinit var binding: FragmentViewerBinding
+    private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        requestPermissionLauncher = registerForActivityResult(RequestPermission()) { isGranted ->
+            if (isGranted)
+                binding.aPod?.let {
+                    startDownloadService(it.title, it.hdUrl)
+                }
+            else
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.storage_permission_error),
+                    Toast.LENGTH_SHORT
+                ).show()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -80,7 +95,7 @@ class ViewerFragment : Fragment(), PictureInformationListener {
             findNavController().navigateUp()
         }
 
-        viewModel.aPods.observe(viewLifecycleOwner, Observer {
+        viewModel.aPods.observe(viewLifecycleOwner, {
             viewerAdapter.submitList(it)
             binding.apodsViewer.setCurrentItem(viewModel.currentPicturePosition, false)
         })
@@ -93,57 +108,29 @@ class ViewerFragment : Fragment(), PictureInformationListener {
         binding.apodsViewer.registerOnPageChangeCallback(pagerListener)
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        when (requestCode) {
-            STORAGE_PERMISSION_REQUEST_CODE -> {
-                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    // Permission granted, download image
-                    binding.aPod?.let {
-                        downloadImage(it.title, it.hdUrl)
-                    }
-                } else {
-                    // Permission not granted
-                    Toast.makeText(
-                        requireContext(),
-                        "Storage permission is required to download",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
     override fun showPictureInformation(aPod: APod) {
         findNavController().navigate(ViewerFragmentDirections.actionPictureInformation(aPod))
     }
 
     override fun downloadImage(pictureName: String, downloadUrl: String?) {
-        if (allPermissionsGranted()) {
-            // Storage permission is granted, trigger download service
-            PictureDownloadService.startService(requireContext(), pictureName, downloadUrl)
-        } else {
-            // Storage permission is not given, show dialog and ask for permission
-            requestPermissions(PERMISSIONS, STORAGE_PERMISSION_REQUEST_CODE)
+        when (PackageManager.PERMISSION_GRANTED) {
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) -> {
+                startDownloadService(pictureName, downloadUrl)
+            }
+            else -> requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
+    }
+
+    private fun startDownloadService(pictureName: String, downloadUrl: String?) {
+        PictureDownloadService.startService(requireContext(), pictureName, downloadUrl)
     }
 
     override fun onDestroyView() {
         binding.pictureInformationListener = null
         binding.apodsViewer.unregisterOnPageChangeCallback(pagerListener)
         super.onDestroyView()
-    }
-
-    private fun allPermissionsGranted(): Boolean {
-        return PERMISSIONS.all {
-            ContextCompat.checkSelfPermission(
-                requireContext(),
-                it
-            ) == PackageManager.PERMISSION_GRANTED
-        }
     }
 }

@@ -13,4 +13,5 @@
     <string name="error_not_found">Page not found ¯\\_(ツ)_/¯</string>
     <string name="error_server">Server issue</string>
     <string name="exception_unknown">Unknown exception</string>
+    <string name="storage_permission_error">Cannot download image without storage permissions</string>
 </resources>
