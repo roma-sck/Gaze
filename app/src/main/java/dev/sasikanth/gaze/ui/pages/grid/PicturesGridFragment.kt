@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import dev.sasikanth.gaze.databinding.FragmentPicturesGridBinding
 import dev.sasikanth.gaze.ui.MainViewModel
@@ -19,16 +18,7 @@ import dev.sasikanth.gaze.ui.adapters.APodsGridAdapter
 @AndroidEntryPoint
 class PicturesGridFragment : Fragment() {
 
-    val viewModel: MainViewModel by activityViewModels()
-
-    private val gridScrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            super.onScrolled(recyclerView, dx, dy)
-            val layoutManager = recyclerView.layoutManager as GridLayoutManager
-            val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
-            viewModel.currentPicturePosition = firstVisiblePosition
-        }
-    }
+    private val viewModel: MainViewModel by activityViewModels()
     private val gridAdapter = APodsGridAdapter(APodItemListener { position ->
         // Navigate to picture view
         viewModel.currentPicturePosition = position
@@ -73,11 +63,6 @@ class PicturesGridFragment : Fragment() {
         scrollToPosition(viewModel.currentPicturePosition)
     }
 
-    override fun onDestroyView() {
-        binding.apodsGrid.removeOnScrollListener(gridScrollListener)
-        super.onDestroyView()
-    }
-
     private fun scrollToPosition(position: Int) {
         val podsGrid = binding.apodsGrid
         val layoutManager = podsGrid.layoutManager as GridLayoutManager
@@ -91,10 +76,7 @@ class PicturesGridFragment : Fragment() {
                 layoutManager.isViewPartiallyVisible(viewAtPosition, true, false)
 
             if (!isViewFullyVisible) {
-                podsGrid.post {
-                    layoutManager.scrollToPosition(position)
-                    podsGrid.addOnScrollListener(gridScrollListener)
-                }
+                podsGrid.post { layoutManager.scrollToPosition(position) }
             }
         }
     }
