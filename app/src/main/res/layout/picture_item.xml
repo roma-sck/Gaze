@@ -5,6 +5,12 @@
 
     <data>
 
+        <import type="kotlin.jvm.functions.Function2" />
+
+        <import type="kotlin.Unit" />
+
+        <import type="android.view.View" />
+
         <variable
             name="aPod"
             type="dev.sasikanth.gaze.data.APod" />
@@ -14,8 +20,8 @@
             type="Integer" />
 
         <variable
-            name="aPodItemListener"
-            type="dev.sasikanth.gaze.ui.adapters.APodItemListener" />
+            name="onGridItemClicked"
+            type="Function2&lt;View, Integer, Unit&gt;" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
@@ -24,7 +30,7 @@
         android:layout_margin="2dp"
         android:clickable="true"
         android:focusable="true"
-        android:onClick="@{() -> aPodItemListener.click(position)}"
+        android:onClick="@{(view) -> onGridItemClicked.invoke(view, position)}"
         app:cardCornerRadius="4dp"
         app:strokeColor="@color/cardStrokeColor"
         app:strokeWidth="1dp">
@@ -39,11 +45,11 @@
                 android:layout_height="0dp"
                 android:contentDescription="@null"
                 android:scaleType="centerCrop"
+                app:aPodThumbnail="@{aPod}"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:aPodThumbnail="@{aPod}"
                 tools:src="@tools:sample/backgrounds/scenic" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

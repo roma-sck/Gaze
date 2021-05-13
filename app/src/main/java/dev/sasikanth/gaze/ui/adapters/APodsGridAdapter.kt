@@ -1,6 +1,7 @@
 package dev.sasikanth.gaze.ui.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -9,6 +10,8 @@ import dev.sasikanth.gaze.data.APod
 import dev.sasikanth.gaze.data.NetworkState
 import dev.sasikanth.gaze.databinding.NetworkStateItemBinding
 import dev.sasikanth.gaze.databinding.PictureItemBinding
+
+typealias OnGridItemClicked = (view: View, position: Int) -> Unit
 
 private val APOD_DIFF = object : DiffUtil.ItemCallback<APod>() {
     override fun areItemsTheSame(oldItem: APod, newItem: APod): Boolean {
@@ -21,7 +24,7 @@ private val APOD_DIFF = object : DiffUtil.ItemCallback<APod>() {
 }
 
 class APodsGridAdapter(
-    private val aPodItemListener: APodItemListener
+    private val onGridItemClicked: OnGridItemClicked
 ) : PagedListAdapter<APod, RecyclerView.ViewHolder>(APOD_DIFF) {
 
     companion object {
@@ -73,7 +76,7 @@ class APodsGridAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is APodItemViewHolder) {
-            holder.bind(getItem(position), aPodItemListener)
+            holder.bind(getItem(position), onGridItemClicked)
         } else if (holder is NetworkStateItemViewHolder) {
             holder.bind(networkState)
         }
@@ -91,10 +94,10 @@ class APodsGridAdapter(
             }
         }
 
-        fun bind(aPod: APod?, aPodItemListener: APodItemListener) {
+        fun bind(aPod: APod?, onGridItemClicked: OnGridItemClicked) {
             binding.aPod = aPod
             binding.position = adapterPosition
-            binding.aPodItemListener = aPodItemListener
+            binding.onGridItemClicked = onGridItemClicked
             binding.executePendingBindings()
         }
     }
@@ -115,11 +118,5 @@ class APodsGridAdapter(
             binding.networkState = networkState
             binding.executePendingBindings()
         }
-    }
-}
-
-class APodItemListener(val onClick: (position: Int) -> Unit) {
-    fun click(position: Int) {
-        onClick(position)
     }
 }

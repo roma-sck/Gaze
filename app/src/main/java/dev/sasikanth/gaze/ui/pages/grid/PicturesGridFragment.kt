@@ -12,18 +12,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import dev.sasikanth.gaze.databinding.FragmentPicturesGridBinding
 import dev.sasikanth.gaze.ui.MainViewModel
-import dev.sasikanth.gaze.ui.adapters.APodItemListener
 import dev.sasikanth.gaze.ui.adapters.APodsGridAdapter
 
 @AndroidEntryPoint
 class PicturesGridFragment : Fragment() {
 
     private val viewModel: MainViewModel by activityViewModels()
-    private val gridAdapter = APodsGridAdapter(APodItemListener { position ->
-        // Navigate to picture view
-        viewModel.currentPicturePosition = position
-        findNavController().navigate(PicturesGridFragmentDirections.actionShowPicture())
-    })
+    private val gridAdapter = APodsGridAdapter(::onGridItemClicked)
 
     private lateinit var binding: FragmentPicturesGridBinding
 
@@ -75,5 +70,10 @@ class PicturesGridFragment : Fragment() {
                 podsGrid.post { layoutManager.scrollToPosition(viewModel.currentPicturePosition) }
             }
         }
+    }
+
+    private fun onGridItemClicked(view: View, position: Int) {
+        viewModel.currentPicturePosition = position
+        findNavController().navigate(PicturesGridFragmentDirections.actionShowPicture())
     }
 }
