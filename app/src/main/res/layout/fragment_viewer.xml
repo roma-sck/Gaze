@@ -5,13 +5,25 @@
 
     <data>
 
-        <variable
-            name="aPod"
-            type="dev.sasikanth.gaze.data.APod" />
+        <import type="kotlin.jvm.functions.Function1" />
+
+        <import type="kotlin.jvm.functions.Function2" />
+
+        <import type="kotlin.Unit" />
+
+        <import type="dev.sasikanth.gaze.data.APod" />
 
         <variable
-            name="pictureInformationListener"
-            type="dev.sasikanth.gaze.ui.pages.viewer.PictureInformationListener" />
+            name="aPod"
+            type="APod" />
+
+        <variable
+            name="onDownloadImage"
+            type="Function2&lt;String, String, Unit&gt;" />
+
+        <variable
+            name="onShowPictureInfo"
+            type="Function1&lt;APod, Unit&gt;" />
 
         <variable
             name="dateFormatter"
@@ -49,7 +61,7 @@
             android:clickable="true"
             android:contentDescription="@string/cd_picture_download"
             android:focusable="true"
-            android:onClick="@{() -> pictureInformationListener.downloadImage(aPod.title, aPod.hdUrl)}"
+            android:onClick="@{() -> onDownloadImage.invoke(aPod.title, aPod.hdUrl)}"
             android:padding="16dp"
             app:marginRightSystemWindowInsets="@{true}"
             app:marginTopSystemWindowInsets="@{true}"
@@ -64,12 +76,13 @@
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
-            android:onClick="@{() -> pictureInformationListener.showPictureInformation(aPod)}"
+            android:onClick="@{() -> onShowPictureInfo.invoke(aPod)}"
             android:paddingStart="0dp"
             android:paddingTop="16dp"
             android:paddingEnd="24dp"
             android:paddingBottom="15dp"
             app:paddingBottomSystemWindowInsets="@{true}"
+            tools:ignore="UnusedAttribute"
             tools:targetApi="m">
 
             <ImageView
@@ -80,11 +93,7 @@
                 android:layout_marginTop="12dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="12dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
                 android:contentDescription="@string/cd_picture_information"
-                android:focusable="true"
-                android:onClick="@{() -> pictureInformationListener.showPictureInformation(aPod)}"
                 android:src="@drawable/ic_arrow_expand"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/picture_title"

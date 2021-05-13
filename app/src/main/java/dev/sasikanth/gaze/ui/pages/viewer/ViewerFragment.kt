@@ -26,20 +26,15 @@ import dev.sasikanth.gaze.utils.ZoomOutPageTransformer
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
-// This can be moved into ViewModel as an single event live data
-interface PictureInformationListener {
-    fun showPictureInformation(aPod: APod)
-    fun downloadImage(pictureName: String, downloadUrl: String?)
-}
-
 @AndroidEntryPoint
-class ViewerFragment : Fragment(), PictureInformationListener {
+class ViewerFragment : Fragment() {
 
     @Inject
     lateinit var dateFormatter: DateTimeFormatter
 
     private val viewModel: MainViewModel by activityViewModels()
 
+    private val viewerAdapter = ViewerAdapter()
     private val pagerListener = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             super.onPageSelected(position)
@@ -79,12 +74,11 @@ class ViewerFragment : Fragment(), PictureInformationListener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentViewerBinding.inflate(inflater).apply {
-            pictureInformationListener = this@ViewerFragment
-            lifecycleOwner = this@ViewerFragment
+            lifecycleOwner = viewLifecycleOwner
             dateFormatter = this@ViewerFragment.dateFormatter
+            onShowPictureInfo = ::onShowPictureInfo
+            onDownloadImage = ::onDownloadImage
         }
-
-        val viewerAdapter = ViewerAdapter()
 
         binding.apodsViewer.apply {
             adapter = viewerAdapter
@@ -108,11 +102,11 @@ class ViewerFragment : Fragment(), PictureInformationListener {
         binding.apodsViewer.registerOnPageChangeCallback(pagerListener)
     }
 
-    override fun showPictureInformation(aPod: APod) {
+    private fun onShowPictureInfo(aPod: APod) {
         findNavController().navigate(ViewerFragmentDirections.actionPictureInformation(aPod))
     }
 
-    override fun downloadImage(pictureName: String, downloadUrl: String?) {
+    private fun onDownloadImage(pictureName: String, downloadUrl: String?) {
         when (PackageManager.PERMISSION_GRANTED) {
             ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -129,7 +123,6 @@ class ViewerFragment : Fragment(), PictureInformationListener {
     }
 
     override fun onDestroyView() {
-        binding.pictureInformationListener = null
         binding.apodsViewer.unregisterOnPageChangeCallback(pagerListener)
         super.onDestroyView()
     }
