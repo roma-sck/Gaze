@@ -59,24 +59,20 @@ class PicturesGridFragment : Fragment() {
                 }
         }
 
-        // Scrolling to current picture position
-        scrollToPosition(viewModel.currentPicturePosition)
+        scrollToPosition()
     }
 
-    private fun scrollToPosition(position: Int) {
+    private fun scrollToPosition() {
         val podsGrid = binding.apodsGrid
         val layoutManager = podsGrid.layoutManager as GridLayoutManager
 
+        fun isViewAtPosition(view: View) =
+            layoutManager.isViewPartiallyVisible(view, true, false)
+
         podsGrid.doOnLayout {
-            val viewAtPosition =
-                layoutManager.findViewByPosition(position)
-                    ?: return@doOnLayout
-
-            val isViewFullyVisible =
-                layoutManager.isViewPartiallyVisible(viewAtPosition, true, false)
-
-            if (!isViewFullyVisible) {
-                podsGrid.post { layoutManager.scrollToPosition(position) }
+            val viewAtPosition = layoutManager.findViewByPosition(viewModel.currentPicturePosition)
+            if (viewAtPosition == null || isViewAtPosition(viewAtPosition)) {
+                podsGrid.post { layoutManager.scrollToPosition(viewModel.currentPicturePosition) }
             }
         }
     }
