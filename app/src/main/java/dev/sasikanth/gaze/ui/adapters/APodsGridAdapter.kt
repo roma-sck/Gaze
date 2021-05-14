@@ -10,8 +10,10 @@ import dev.sasikanth.gaze.data.APod
 import dev.sasikanth.gaze.data.NetworkState
 import dev.sasikanth.gaze.databinding.NetworkStateItemBinding
 import dev.sasikanth.gaze.databinding.PictureItemBinding
+import java.util.concurrent.atomic.AtomicBoolean
 
 typealias OnGridItemClicked = (view: View, position: Int) -> Unit
+typealias OnImageLoaded = (position: Int) -> Unit
 
 private val APOD_DIFF = object : DiffUtil.ItemCallback<APod>() {
     override fun areItemsTheSame(oldItem: APod, newItem: APod): Boolean {
@@ -24,7 +26,9 @@ private val APOD_DIFF = object : DiffUtil.ItemCallback<APod>() {
 }
 
 class APodsGridAdapter(
-    private val onGridItemClicked: OnGridItemClicked
+    private val currentPosition: Int,
+    private val onGridItemClicked: OnGridItemClicked,
+    private val onImageLoaded: () -> Unit
 ) : PagedListAdapter<APod, RecyclerView.ViewHolder>(APOD_DIFF) {
 
     companion object {
@@ -32,11 +36,10 @@ class APodsGridAdapter(
         const val APOD_ITEM = 1
     }
 
-    fun isLoadingItem(position: Int) = getItemViewType(position) == LOADING_ITEM
-
+    private val enterTransitionStarted = AtomicBoolean()
     private var networkState: NetworkState? = null
 
-    private fun hasExtraRow() = networkState != null && networkState !is NetworkState.Success
+    fun isLoadingItem(position: Int) = getItemViewType(position) == LOADING_ITEM
 
     fun setNetworkState(networkState: NetworkState) {
         val previousState = this.networkState
@@ -54,6 +57,8 @@ class APodsGridAdapter(
         }
     }
 
+    private fun hasExtraRow() = networkState != null && networkState !is NetworkState.Success
+
     override fun getItemCount(): Int {
         return super.getItemCount() + if (hasExtraRow()) 1 else 0
     }
@@ -69,36 +74,56 @@ class APodsGridAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             LOADING_ITEM -> NetworkStateItemViewHolder.from(parent)
-            APOD_ITEM -> APodItemViewHolder.from(parent)
+            APOD_ITEM -> APodItemViewHolder.from(parent, onGridItemClicked, ::onImageLoaded)
             else -> throw IllegalArgumentException("Unknown view type $viewType")
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is APodItemViewHolder) {
-            holder.bind(getItem(position), onGridItemClicked)
+            holder.bind(getItem(position))
         } else if (holder is NetworkStateItemViewHolder) {
             holder.bind(networkState)
         }
     }
 
+    private fun onImageLoaded(position: Int) {
+        if (position != currentPosition) return
+        if (enterTransitionStarted.getAndSet(true)) return
+
+        onImageLoaded.invoke()
+    }
+
     class APodItemViewHolder private constructor(
-        private val binding: PictureItemBinding
+        private val binding: PictureItemBinding,
+        private val onGridItemClicked: OnGridItemClicked,
+        private val onImageLoaded: OnImageLoaded
     ) : RecyclerView.ViewHolder(binding.root) {
 
         companion object {
-            fun from(parent: ViewGroup): APodItemViewHolder {
+            fun from(
+                parent: ViewGroup,
+                onGridItemClicked: OnGridItemClicked,
+                onImageLoaded: OnImageLoaded
+            ): APodItemViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = PictureItemBinding.inflate(layoutInflater, parent, false)
-                return APodItemViewHolder(binding)
+                return APodItemViewHolder(binding, onGridItemClicked, onImageLoaded)
             }
         }
 
-        fun bind(aPod: APod?, onGridItemClicked: OnGridItemClicked) {
+        val imageView get() = binding.apodImage
+
+        fun bind(aPod: APod?) {
             binding.aPod = aPod
             binding.position = adapterPosition
-            binding.onGridItemClicked = onGridItemClicked
+            binding.onGridItemClicked = ::onGridItemClicked
+            binding.onImageLoaded = { onImageLoaded(adapterPosition) }
             binding.executePendingBindings()
+        }
+
+        private fun onGridItemClicked(position: Int) {
+            onGridItemClicked.invoke(binding.apodImage, position)
         }
     }
 

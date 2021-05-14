@@ -22,6 +22,6 @@ You can create an API key here (https://api.nasa.gov/index.html#apply-for-an-api
 - PhotoView
 
 ## TODO
-- Shared element transition between grid and detail pager 
+- ~~Shared element transition between grid and detail pager~~
 - Replace interface callbacks with ViewModel LiveData Event for click events
 - Additional tests

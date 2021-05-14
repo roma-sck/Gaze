@@ -31,8 +31,8 @@ fun AppCompatTextView.setFormattedDate(date: LocalDate?, dateFormatter: DateTime
     }
 }
 
-@BindingAdapter("aPodThumbnail")
-fun ImageView.loadThumbnail(aPod: APod?) {
+@BindingAdapter("aPodThumbnail", "onImageLoaded")
+fun ImageView.loadThumbnail(aPod: APod?, onImageLoaded: () -> Unit) {
     aPod?.let {
         // Load it.hdUrl if you want to load original image in grid as well, it would
         // allow us to preload the image in detail view and cross fade it to original image
@@ -40,6 +40,10 @@ fun ImageView.loadThumbnail(aPod: APod?) {
             placeholder(R.drawable.ic_image_loading)
             error(R.drawable.ic_image_error)
             size(500)
+            listener(
+                onSuccess = { _, _ -> onImageLoaded() },
+                onError = { _, _ -> onImageLoaded() }
+            )
         }
     }
 }
@@ -47,13 +51,17 @@ fun ImageView.loadThumbnail(aPod: APod?) {
 // Can be combined with above one with multiple binding adapter values,
 // personal preference for separation. Some hdurl and thumbnails have different aspect ratios
 // so glide isn't scaling them properly when loaded with .thumbnail()
-@BindingAdapter("aPodImage")
-fun ImageView.setImageUrl(aPod: APod?) {
+@BindingAdapter("aPodImage", "onImageLoaded")
+fun ImageView.setImageUrl(aPod: APod?, onImageLoaded: () -> Unit) {
     aPod?.let {
-        load(it.hdUrl) {
+        load(it.thumbnailUrl) {
             crossfade(true)
             placeholder(R.drawable.ic_image_loading)
             error(R.drawable.ic_image_error)
+            listener(
+                onSuccess = { _, _ -> onImageLoaded() },
+                onError = { _, _ -> onImageLoaded() }
+            )
         }
     }
 }

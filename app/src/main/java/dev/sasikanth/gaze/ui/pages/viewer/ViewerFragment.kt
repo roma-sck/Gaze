@@ -10,11 +10,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
+import androidx.core.app.SharedElementCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.transition.MaterialContainerTransform
 import dagger.hilt.android.AndroidEntryPoint
 import dev.sasikanth.gaze.R
 import dev.sasikanth.gaze.data.APod
@@ -22,6 +25,7 @@ import dev.sasikanth.gaze.databinding.FragmentViewerBinding
 import dev.sasikanth.gaze.services.PictureDownloadService
 import dev.sasikanth.gaze.ui.MainViewModel
 import dev.sasikanth.gaze.ui.adapters.ViewerAdapter
+import dev.sasikanth.gaze.ui.adapters.ViewerAdapter.ViewerItemHolder
 import dev.sasikanth.gaze.utils.ZoomOutPageTransformer
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -34,7 +38,6 @@ class ViewerFragment : Fragment() {
 
     private val viewModel: MainViewModel by activityViewModels()
 
-    private val viewerAdapter = ViewerAdapter()
     private val pagerListener = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             super.onPageSelected(position)
@@ -80,6 +83,7 @@ class ViewerFragment : Fragment() {
             onDownloadImage = ::onDownloadImage
         }
 
+        val viewerAdapter = ViewerAdapter(::onImageLoaded)
         binding.apodsViewer.apply {
             adapter = viewerAdapter
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
@@ -93,6 +97,11 @@ class ViewerFragment : Fragment() {
             viewerAdapter.submitList(it)
             binding.apodsViewer.setCurrentItem(viewModel.currentPicturePosition, false)
         })
+
+        prepareTransitions()
+        if (savedInstanceState == null) {
+            postponeEnterTransition()
+        }
 
         return binding.root
     }
@@ -122,8 +131,38 @@ class ViewerFragment : Fragment() {
         PictureDownloadService.startService(requireContext(), pictureName, downloadUrl)
     }
 
+    private fun onImageLoaded() {
+        startPostponedEnterTransition()
+    }
+
     override fun onDestroyView() {
         binding.apodsViewer.unregisterOnPageChangeCallback(pagerListener)
         super.onDestroyView()
+    }
+
+    private fun prepareTransitions() {
+        sharedElementEnterTransition = MaterialContainerTransform()
+
+        setEnterSharedElementCallback(object : SharedElementCallback() {
+            override fun onMapSharedElements(
+                names: MutableList<String>?,
+                sharedElements: MutableMap<String, View>?
+            ) {
+                if (names == null || sharedElements == null) return
+
+                val recyclerView = binding.apodsViewer.getChildAt(0) as RecyclerView
+                val viewHolder = recyclerView
+                    .findViewHolderForAdapterPosition(viewModel.currentPicturePosition)
+                    ?: return
+
+                val imageView = if (viewHolder is ViewerItemHolder) {
+                    viewHolder.imageView
+                } else {
+                    return
+                }
+
+                sharedElements[names[0]] = imageView
+            }
+        })
     }
 }
