@@ -13,7 +13,6 @@ import androidx.databinding.BindingAdapter
 import coil.load
 import com.google.android.material.card.MaterialCardView
 import dev.sasikanth.gaze.R
-import dev.sasikanth.gaze.data.APod
 import dev.sasikanth.gaze.data.NetworkState
 import dev.sasikanth.gaze.utils.extensions.dpToPx
 import java.time.LocalDate
@@ -31,30 +30,10 @@ fun AppCompatTextView.setFormattedDate(date: LocalDate?, dateFormatter: DateTime
     }
 }
 
-@BindingAdapter("aPodThumbnail", "onImageLoaded")
-fun ImageView.loadThumbnail(aPod: APod?, onImageLoaded: () -> Unit) {
-    aPod?.let {
-        // Load it.hdUrl if you want to load original image in grid as well, it would
-        // allow us to preload the image in detail view and cross fade it to original image
-        load(it.thumbnailUrl) {
-            placeholder(R.drawable.ic_image_loading)
-            error(R.drawable.ic_image_error)
-            size(500)
-            listener(
-                onSuccess = { _, _ -> onImageLoaded() },
-                onError = { _, _ -> onImageLoaded() }
-            )
-        }
-    }
-}
-
-// Can be combined with above one with multiple binding adapter values,
-// personal preference for separation. Some hdurl and thumbnails have different aspect ratios
-// so glide isn't scaling them properly when loaded with .thumbnail()
-@BindingAdapter("aPodImage", "onImageLoaded")
-fun ImageView.setImageUrl(aPod: APod?, onImageLoaded: () -> Unit) {
-    aPod?.let {
-        load(it.thumbnailUrl) {
+@BindingAdapter("imageUrl", "onImageLoaded")
+fun ImageView.setImageUrl(imageUrl: String?, onImageLoaded: () -> Unit) {
+    imageUrl?.let {
+        load(it) {
             crossfade(true)
             placeholder(R.drawable.ic_image_loading)
             error(R.drawable.ic_image_error)

@@ -28,7 +28,7 @@
             android:layout_height="0dp"
             android:contentDescription="@null"
             android:transitionName="@{`pod-` + aPod.date}"
-            app:aPodImage="@{aPod}"
+            app:imageUrl="@{aPod.thumbnailUrl}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
